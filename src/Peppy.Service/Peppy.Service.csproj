@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Peppy.Router\Peppy.Router.csproj" />
+    <ProjectReference Include="..\Peppy.ServiceRegistry\Peppy.ServiceRegistry.csproj" />
+    <ProjectReference Include="..\Peppy.Swagger\Peppy.Swagger.csproj" />
+  </ItemGroup>
+
+</Project>
