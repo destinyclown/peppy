@@ -2,27 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNetCore.CAP;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using Peppy.EventBus;
-using Peppy.GrpcService.Event;
 
 namespace Peppy.GrpcService
 {
     public class GreeterService : Greeter.GreeterBase
     {
-        private readonly IEventBus<CustomerCreatedEvent> _eventBus;
         private readonly ILogger<GreeterService> _logger;
+        private readonly ICapPublisher _capBus;
 
-        public GreeterService(ILogger<GreeterService> logger, IEventBus<CustomerCreatedEvent> eventBus)
+        public GreeterService(ILogger<GreeterService> logger, ICapPublisher capPublisher)
         {
             _logger = logger;
-            _eventBus = eventBus;
+            _capBus = capPublisher;
         }
 
         public override async Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
-            await _eventBus.PublishAsync(new CustomerCreatedEvent("test"));
+            _capBus.Publish("xxx.services.show.time", DateTime.Now);
             return await Task.FromResult(new HelloReply
             {
                 Message = "Hello " + request.Name

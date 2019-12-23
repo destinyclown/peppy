@@ -10,12 +10,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetCore.CAP" Version="3.0.0-preview-93361469" />
+    <PackageReference Include="DotNetCore.CAP.MySql" Version="3.0.0-preview-93361469" />
+    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="3.0.0-preview-93361469" />
     <PackageReference Include="Google.Protobuf" Version="3.11.2" />
     <PackageReference Include="Grpc.Net.Client" Version="2.26.0" />
     <PackageReference Include="Grpc.Tools" Version="2.26.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
