@@ -14,7 +14,7 @@ namespace Peppy.Swagger
         ) => services
             .AddSwaggerGen(options =>
             {
-                var apiInfo = ApiConfigInfo.Instance;
+                var apiInfo = ApiInfo.Instance;
 
                 options.DescribeAllEnumsAsStrings();
 
@@ -33,7 +33,7 @@ namespace Peppy.Swagger
                     Type = "apiKey"
                 });
 
-                foreach(var xmlFile in apiInfo.SwaggerInfo.XmlFiles)
+                foreach (var xmlFile in apiInfo.SwaggerInfo.XmlFiles)
                 {
                     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                     if (File.Exists(xmlPath))
@@ -45,7 +45,7 @@ namespace Peppy.Swagger
                 options.OperationFilter<AuthorizeCheckOperationFilter>(apiInfo);
             });
 
-        public static IApplicationBuilder UseCustomSwagger(
+        public static IApplicationBuilder UsePeppySwagger(
             this IApplicationBuilder app,
             IApiInfo apiInfo
             ) => app.UseSwagger(c =>

@@ -205,6 +205,5 @@ namespace Peppy.ServiceRegistry.Consul
                 WaitTime = _configuration.LongPollMaxWait
             };
         }
-
     }
 }

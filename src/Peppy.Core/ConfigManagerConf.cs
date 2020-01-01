@@ -8,15 +8,12 @@ namespace Peppy.Core
     {
         public static IConfiguration Configuration = null;
 
-        static readonly ConcurrentDictionary<string, List<string>> _dicCache = new ConcurrentDictionary<string, List<string>>();
+        private static readonly ConcurrentDictionary<string, List<string>> _dicCache = new ConcurrentDictionary<string, List<string>>();
 
-
-
-        public static void SetConfiguration(IConfiguration configuration)
+        public static void Registry(this IConfiguration configuration)
         {
             if (Configuration == null)
                 Configuration = configuration;
-
         }
 
         /// <summary>
@@ -56,6 +53,5 @@ namespace Peppy.Core
             }
             return refValue;
         }
-
     }
 }

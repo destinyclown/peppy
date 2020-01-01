@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Peppy.Core
 {
-    public class ApiConfigInfo : IApiInfo
+    public class ApiInfo : IApiInfo
     {
         public static IApiInfo Instantiate()
         {
-            Instance = new ApiConfigInfo();
+            Instance = new ApiInfo();
             return Instance;
         }
 
@@ -23,7 +23,7 @@ namespace Peppy.Core
         public string Version => ConfigManagerConf.GetValue("ServiceDiscovery:Version");
 
         public SwaggerInfo SwaggerInfo
-            =>  
+            =>
             new SwaggerInfo(
                 ConfigManagerConf.GetReferenceValue("ServiceDiscovery:SwaggerInfo:XmlFiles"),
                 ConfigManagerConf.GetValue("ServiceDiscovery:SwaggerInfo:Title"),

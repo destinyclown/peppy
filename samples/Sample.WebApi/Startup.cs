@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +52,13 @@ namespace Sample.WebApi
             {
                 endpoints.MapControllers();
             });
+            var features = app.Properties["server.Features"] as FeatureCollection;
+            var addresses = features.Get<IServerAddressesFeature>();
+            var address = addresses.Addresses.First();
+            var name = Dns.GetHostName(); // get container id
+            var ip = Dns.GetHostEntry(name).AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+            var uri = new Uri(address);
+            var port = uri.Port;
         }
     }
 }
