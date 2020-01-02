@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Peppy.Redis;
 
 namespace Sample.WebApi
 {
@@ -41,6 +42,13 @@ namespace Sample.WebApi
                 });
                 x.FailedRetryCount = 5;
             });
+            //services.AddPeppyRedis(options =>
+            //{
+            //    options.HostName = "192.168.6.45";
+            //    options.Port = "6379";
+            //    options.Defaultdatabase = 0;
+            //});
+            services.AddPeppyRedis(Configuration);
             services.AddControllers();
         }
 

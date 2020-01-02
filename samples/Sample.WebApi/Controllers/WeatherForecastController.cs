@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DotNetCore.CAP;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Peppy.Redis;
 
 namespace Sample.WebApi.Controllers
 {
@@ -19,25 +20,29 @@ namespace Sample.WebApi.Controllers
 
         private readonly ICapPublisher _capBus;
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IRedisManager _redisManager;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, ICapPublisher capPublisher)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ICapPublisher capPublisher, IRedisManager redisManager)
         {
             _logger = logger;
             _capBus = capPublisher;
+            _redisManager = redisManager;
         }
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get([FromServices]AppDbContext dbContext)
         {
-            using (var trans = dbContext.Database.BeginTransaction(_capBus, autoCommit: false))
-            {
-                dbContext.Persons.Add(new Person() { Name = DateTime.Now.ToString() });
+            _redisManager.Add("test", "test");
 
-                _capBus.Publish("sample.rabbitmq.qq", DateTime.Now);
+            //using (var trans = dbContext.Database.BeginTransaction(_capBus, autoCommit: false))
+            //{
+            //    dbContext.Persons.Add(new Person() { Name = DateTime.Now.ToString() });
 
-                dbContext.SaveChanges();
-                trans.Commit();
-            }
+            //    _capBus.Publish("sample.rabbitmq.qq", DateTime.Now);
+
+            //    dbContext.SaveChanges();
+            //    trans.Commit();
+            //}
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

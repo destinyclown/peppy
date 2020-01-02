@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Peppy.Core
@@ -31,7 +32,6 @@ namespace Peppy.Core
 
             return s;
         }
-
 
         public static bool StartsWithSegments(this Uri uri, string path)
         {
