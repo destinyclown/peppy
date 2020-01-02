@@ -9,48 +9,7 @@ namespace Peppy.Core
     public static class JsonHelper
     {
         #region Method
-        /// <summary>
-        /// 类对像转换成json格式
-        /// </summary> 
-        /// <returns></returns>
-        public static string ToJson(this object t)
-        {
-            var ser = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Include, };
-            ser.Converters.Add(new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd hh:mm:ss" });
-            return JsonConvert.SerializeObject(t, Formatting.Indented, ser);
-        }
 
-        /// <summary>
-        /// 类转化为json
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        public static string ToJson<T>(this T t)
-        {
-            var ser = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Include, };
-            ser.Converters.Add(new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd hh:mm:ss" });
-            return JsonConvert.SerializeObject(t, Formatting.Indented, ser);
-        }
-
-        /// <summary>
-        /// 类对像转换成json格式
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="HasNullIgnore">是否忽略NULL值</param>
-        /// <returns></returns>
-        public static string ToJson(this object t, bool HasNullIgnore)
-        {
-            if (HasNullIgnore)
-            {
-
-                var ser = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-                ser.Converters.Add(new IsoDateTimeConverter() { DateTimeFormat = "yyyy-MM-dd hh:mm:ss" });
-                return JsonConvert.SerializeObject(t, Formatting.Indented, ser);
-            }
-            else
-                return ToJson(t);
-        }
         /// <summary>
         /// json格式转换
         /// </summary>
@@ -90,7 +49,7 @@ namespace Peppy.Core
             return o;
         }
 
-        #endregion
+        #endregion Method
 
         /// <summary>
         /// json字符串转化成json数组
@@ -115,18 +74,22 @@ namespace Peppy.Core
             var timeConverter = new IsoDateTimeConverter { DateTimeFormat = datetimeformats };
             return JsonConvert.SerializeObject(obj, timeConverter);
         }
+
         public static T ToObject<T>(this string Json)
         {
             return Json == null ? default(T) : JsonConvert.DeserializeObject<T>(Json);
         }
+
         public static List<T> ToList<T>(this string Json)
         {
             return Json == null ? null : JsonConvert.DeserializeObject<List<T>>(Json);
         }
+
         public static DataTable ToTable(this string Json)
         {
             return Json == null ? null : JsonConvert.DeserializeObject<DataTable>(Json);
         }
+
         public static JObject ToJObject(this string Json)
         {
             return Json == null ? JObject.Parse("{}") : JObject.Parse(Json.Replace("&nbsp;", ""));
