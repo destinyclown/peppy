@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 
 namespace Peppy.Core
 {
@@ -40,14 +38,13 @@ namespace Peppy.Core
         /// 链接数据库名称
         /// </summary>
         string ConnectionStringName { get; }
-
     }
 
     public class SwaggerInfo
     {
         public SwaggerInfo(
-            List<string> xmlFiles, 
-            string title, 
+            List<string> xmlFiles,
+            string title,
             string version)
         {
             XmlFiles = xmlFiles;

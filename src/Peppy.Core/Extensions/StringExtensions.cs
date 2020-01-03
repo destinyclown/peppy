@@ -45,6 +45,5 @@ namespace Peppy.Core
         {
             return String.IsNullOrWhiteSpace(s);
         }
-
     }
 }

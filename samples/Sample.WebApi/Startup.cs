@@ -13,7 +13,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Peppy;
 using Peppy.Redis;
+using Sample.WebApi.Controllers;
 
 namespace Sample.WebApi
 {
@@ -48,7 +50,14 @@ namespace Sample.WebApi
             //    options.Port = "6379";
             //    options.Defaultdatabase = 0;
             //});
+            services.AddSingleton<IConsumerClient, RabbitMQConsumerClient>();
             services.AddPeppyRedis(Configuration);
+            services.AddPeppyRabbitMQ(options =>
+            {
+                options.HostName = "134.175.159.22";
+                options.UserName = "bailun";
+                options.Password = "bailun2019";
+            });
             services.AddControllers();
         }
 

@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Peppy.Redis
+namespace Peppy.Redis.Manager
 {
-    public class RedisManager : IRedisManager
+    internal sealed class RedisManager : IRedisManager
     {
         private readonly ILogger<RedisManager> _logger;
         private readonly IOptions<PeppyRedisOptions> _redisOptions;

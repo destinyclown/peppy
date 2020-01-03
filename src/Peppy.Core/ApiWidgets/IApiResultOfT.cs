@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Peppy.Core
+﻿namespace Peppy.Core
 {
     public interface IApiResult<TResult> : IApiResult
     {
-
         /// <summary>
         /// Gets or sets the result.
         /// </summary>

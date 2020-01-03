@@ -10,7 +10,7 @@ namespace Sample.ConsoleApp
     {
         private static void Main(string[] args)
         {
-            var data = ExcelHelper.ExcelToDataTable(@"C:\Users\75795\Desktop\test.xlsx", "Sheet1", true);
+            //var data = ExcelHelper.ExcelToDataTable(@"C:\Users\75795\Desktop\test.xlsx", "Sheet1", true);
 
             #region 分析是否为散落sku
 
@@ -34,22 +34,22 @@ namespace Sample.ConsoleApp
 
             #region 散落统计
 
-            var list = ExcelHelper.ToDataList<Model>(data);
-            var types = list.Select(x => x.Type).Distinct().ToList();
-            var resultData = new List<StatisticsModel>();
-            foreach (var type in types)
-            {
-                var items = list.Where(x => x.Type == type).ToList();
-                var falseCount = items.Count(x => x.Valid == "FALSE");
-                var model = new StatisticsModel
-                {
-                    Type = type,
-                    Scattered = ((decimal)falseCount / items.Count() * 100).ToString("0.00") + "%"
-                };
-                resultData.Add(model);
-            }
-            var result = ExcelHelper.ToDataTableTow(resultData);
-            ExcelHelper.GridToExcelByNPOI(result, @"C:\Users\75795\Desktop\test1.xlsx");
+            //var list = ExcelHelper.ToDataList<Model>(data);
+            //var types = list.Select(x => x.Type).Distinct().ToList();
+            //var resultData = new List<StatisticsModel>();
+            //foreach (var type in types)
+            //{
+            //    var items = list.Where(x => x.Type == type).ToList();
+            //    var falseCount = items.Count(x => x.Valid == "FALSE");
+            //    var model = new StatisticsModel
+            //    {
+            //        Type = type,
+            //        Scattered = ((decimal)falseCount / items.Count() * 100).ToString("0.00") + "%"
+            //    };
+            //    resultData.Add(model);
+            //}
+            //var result = ExcelHelper.ToDataTableTow(resultData);
+            //ExcelHelper.GridToExcelByNPOI(result, @"C:\Users\75795\Desktop\test1.xlsx");
 
             #endregion 散落统计
         }

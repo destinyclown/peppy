@@ -12,7 +12,8 @@ namespace Peppy.Core.ApiWidgets
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            return builder.AddMvcOptions(options => {
+            return builder.AddMvcOptions(options =>
+            {
                 options.Filters.Add(typeof(ApiResultFilterAttribute));
                 options.Filters.Add(typeof(ApiExceptionFilterAttribute));
             });
@@ -25,7 +26,8 @@ namespace Peppy.Core.ApiWidgets
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            return builder.AddMvcOptions(options => {
+            return builder.AddMvcOptions(options =>
+            {
                 options.Filters.Add(typeof(ApiResultFilterAttribute));
                 options.Filters.Add(typeof(ApiExceptionFilterAttribute));
             });

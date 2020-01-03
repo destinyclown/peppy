@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Peppy.Redis;
+using Peppy.Redis.Manager;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Peppy.Redis
+namespace Peppy
 {
     public static class ServiceCollectionExtensions
     {
