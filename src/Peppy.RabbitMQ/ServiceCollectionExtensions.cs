@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Peppy.Core.Amqp.Internal;
 using Peppy.RabbitMQ;
 using Peppy.RabbitMQ.Manager;
 using System;
@@ -17,6 +18,7 @@ namespace Peppy
             }
             services.Configure(options);
             services.AddSingleton<IRabbitMQManager, RabbitMQManager>();
+            services.AddSingleton<ISubscribeInvokerFactory, ConsumerInvokerFactory>();
             services.AddSingleton<ClientRegister>();
             return services;
         }

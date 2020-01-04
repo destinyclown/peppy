@@ -1,19 +1,26 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Peppy.Core;
 using Peppy.Core.Amqp;
+using Peppy.Core.Amqp.Internal;
+using Peppy.Core.Amqp.Messages;
 using Peppy.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using static Peppy.Core.Amqp.AmqpAttribute;
 using static Peppy.RabbitMQReceiveAttribute;
 
 namespace Peppy.RabbitMQ
 {
     public class ClientRegister
     {
+        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly IServiceProvider _serviceProvider;
         private readonly IRabbitMQManager _rabbitMQManager;
+        private ISubscribeInvoker Invoker { get; }
 
         public ClientRegister(
             IServiceProvider serviceProvider,
@@ -21,6 +28,7 @@ namespace Peppy.RabbitMQ
         {
             _serviceProvider = serviceProvider;
             _rabbitMQManager = rabbitMQManager;
+            Invoker = _serviceProvider.GetService<ISubscribeInvokerFactory>().CreateInvoker();
             Start();
         }
 
@@ -29,7 +37,7 @@ namespace Peppy.RabbitMQ
             var groupingMatches = FindFromControllerTypes();
             foreach (var matchGroup in groupingMatches)
             {
-                RegisterMessageProcessor(matchGroup.MethodInfo);
+                RegisterMessageProcessor(matchGroup);
                 _rabbitMQManager.Listening(matchGroup.Attribute.ExchangeName, matchGroup.Attribute.QueueName);
             }
         }
@@ -79,18 +87,20 @@ namespace Peppy.RabbitMQ
             }
         }
 
-        private void RegisterMessageProcessor(MethodInfo methodInfo)
+        private void RegisterMessageProcessor(ConsumerExecutorDescriptor descriptor)
         {
-            _rabbitMQManager.OnMessageReceived += (sender, transportMessage) =>
+            _rabbitMQManager.OnMessageReceived += async (sender, transportMessage) =>
             {
                 try
                 {
-                    var ass = Assembly.LoadFile(methodInfo.Module.FullyQualifiedName);
-                    object[] parametors = new object[] { Convert.ToBase64String(transportMessage.Body) };
-                    var type = methodInfo.DeclaringType;
-                    var obj = _serviceProvider.GetRequiredService(type);
-                    methodInfo.Invoke(obj, parametors);
+                    _rabbitMQManager.CreateConnect(descriptor.Attribute.ExchangeName, descriptor.Attribute.QueueName);
+                    var message = new Message(transportMessage.Headers, Encoding.UTF8.GetString(transportMessage.Body));
+                    var value = message.Value.ToString().ToObject<Message>();
+                    var consumerContext = new ConsumerContext(descriptor, value);
+                    await Invoker.InvokeAsync(consumerContext, _cts.Token);
                     _rabbitMQManager.Commit(sender);
+                    //_rabbitMQManager.Receive(descriptor.Attribute.ExchangeName, descriptor.Attribute.QueueName, (T) => Invoker.InvokeAsync(consumerContext, _cts.Token).GetAwaiter().GetResult());
+                    //_rabbitMQManager.Commit(sender);
                 }
                 catch (Exception ex)
                 {

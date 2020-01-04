@@ -6,15 +6,17 @@ namespace Peppy.Core.Amqp
 {
     public interface IAmqpManager
     {
+        void CreateConnect(string exchangeName, string queueName);
+
         void Commit(object sender);
 
         void Reject(object sender);
 
         void Listening(string exchangeName, string queueName);
 
-        void Receive<T>(string exchangeName, string queueName, Action<T> received);
+        void Receive(string exchangeName, string queueName, Action<object> received);
 
-        Task ReceiveAsync<T>(string exchangeName, string queueName, Action<T> received);
+        Task ReceiveAsync(string exchangeName, string queueName, Action<object> received);
 
         bool SendMsg<T>(string exchangeName, string queueName, T msg);
 

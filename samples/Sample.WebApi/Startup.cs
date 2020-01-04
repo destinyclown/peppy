@@ -1,21 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Peppy;
-using Peppy.Redis;
-using Sample.WebApi.Controllers;
 
 namespace Sample.WebApi
 {
@@ -32,25 +24,24 @@ namespace Sample.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>();
-            services.AddCap(x =>
-            {
-                x.UseEntityFramework<AppDbContext>();
-                x.UseDashboard();
-                x.UseRabbitMQ(configure =>
-                {
-                    configure.HostName = "134.175.159.22";
-                    configure.UserName = "bailun";
-                    configure.Password = "bailun2019";
-                });
-                x.FailedRetryCount = 5;
-            });
+            //services.AddCap(x =>
+            //{
+            //    x.UseEntityFramework<AppDbContext>();
+            //    x.UseDashboard();
+            //    x.UseRabbitMQ(configure =>
+            //    {
+            //        configure.HostName = "134.175.159.22";
+            //        configure.UserName = "bailun";
+            //        configure.Password = "bailun2019";
+            //    });
+            //    x.FailedRetryCount = 5;
+            //});
             //services.AddPeppyRedis(options =>
             //{
             //    options.HostName = "192.168.6.45";
             //    options.Port = "6379";
             //    options.Defaultdatabase = 0;
             //});
-            services.AddSingleton<IConsumerClient, RabbitMQConsumerClient>();
             services.AddPeppyRedis(Configuration);
             services.AddPeppyRabbitMQ(options =>
             {

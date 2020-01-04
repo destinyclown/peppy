@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Peppy.Core.Amqp
 {
@@ -20,5 +22,17 @@ namespace Peppy.Core.Amqp
         /// Queue Name
         /// </summary>
         public string QueueName { get; set; }
+
+        [AttributeUsage(AttributeTargets.Parameter)]
+        public class FromPeppyAttribute : Attribute
+        {
+        }
+
+        public class PeyypHeader : ReadOnlyDictionary<string, string>
+        {
+            public PeyypHeader(IDictionary<string, string> dictionary) : base(dictionary)
+            {
+            }
+        }
     }
 }

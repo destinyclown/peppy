@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Peppy.Core;
 using Peppy.Core.Amqp;
+using Peppy.Core.Amqp.Messages;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -47,10 +49,10 @@ namespace Peppy.RabbitMQ.Manager
 
         public void Listening(string exchangeName, string queueName)
         {
-            var channel = Connect(exchangeName, queueName);
-            var consumer = new EventingBasicConsumer(channel);
+            _channel = Connect(exchangeName, queueName);
+            var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += OnConsumerReceived;
-            channel.BasicConsume(queueName, false, consumer);
+            _channel.BasicConsume(queueName, false, consumer);
         }
 
         private void CreateConn(string name)
@@ -77,7 +79,12 @@ namespace Peppy.RabbitMQ.Manager
             return channel;
         }
 
-        public IModel Connect(string exchangeName, string queueName)
+        public void CreateConnect(string exchangeName, string queueName)
+        {
+            Connect(exchangeName, queueName);
+        }
+
+        private IModel Connect(string exchangeName, string queueName)
         {
             _channel = GetChannel(queueName);
             if (!string.IsNullOrEmpty(exchangeName))
@@ -121,7 +128,7 @@ namespace Peppy.RabbitMQ.Manager
             _channel.BasicReject((ulong)sender, true);
         }
 
-        public void Receive<T>(string exchangeName, string queueName, Action<T> received)
+        public void Receive(string exchangeName, string queueName, Action<object> received)
         {
             try
             {
@@ -132,10 +139,11 @@ namespace Peppy.RabbitMQ.Manager
                     //接收到消息事件
                     consumer.Received += (ch, ea) =>
                     {
+                        var type = received.Method.GetParameters().FirstOrDefault().ParameterType;
                         string message = Encoding.UTF8.GetString(ea.Body);
-                        var msg = message.ToObject<T>();
+                        var msg = message.ToObject<Message>();
                         DateTime time = DateTime.Now;
-                        received(msg);
+                        received(msg.Value);
                         var timeEnd = DateTime.Now - time;
                         if (_channel.IsClosed)
                         {
@@ -155,7 +163,7 @@ namespace Peppy.RabbitMQ.Manager
             }
         }
 
-        public async Task ReceiveAsync<T>(string exchangeName, string queueName, Action<T> received)
+        public async Task ReceiveAsync(string exchangeName, string queueName, Action<object> received)
         {
             await Task.Run(() =>
             {
@@ -195,9 +203,15 @@ namespace Peppy.RabbitMQ.Manager
                     //1：非持久化 2：可持久化
                     basicProperties.DeliveryMode = 2;
                     var address = new PublicationAddress(ExchangeType.Direct, exchangeName, queueName);
+                    var headers = new Dictionary<string, string>
+                    {
+                        { Core.Amqp.Messages.Headers.Type, typeof(T).FullName },
+                        { Core.Amqp.Messages.Headers.SentTime, DateTimeOffset.Now.ToString() }
+                    };
                     foreach (var msg in msgs)
                     {
-                        var payload = Encoding.UTF8.GetBytes(msg.ToJson());
+                        var message = new Message(headers, msg);
+                        var payload = Encoding.UTF8.GetBytes(message.ToJson());
                         channel.BasicPublish(address, basicProperties, payload);
                     }
                 }
@@ -246,10 +260,17 @@ namespace Peppy.RabbitMQ.Manager
                         //声明一个队列
                         channel.QueueDeclare(queueName, true, false, false, null);
                     }
+                    var headers = new Dictionary<string, string>
+                    {
+                        { Core.Amqp.Messages.Headers.Type, typeof(T).FullName },
+                        { Core.Amqp.Messages.Headers.SentTime, DateTimeOffset.Now.ToString() }
+                    };
                     var basicProperties = channel.CreateBasicProperties();
                     //1：非持久化 2：可持久化
                     basicProperties.DeliveryMode = 2;
-                    var payload = Encoding.UTF8.GetBytes(msg.ToJson());
+                    var message = new Message(headers, msg);
+                    var transportMessage = new TransportMessage(message.Headers, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message.Value)));
+                    var payload = transportMessage.Body;
                     var address = new PublicationAddress(ExchangeType.Direct, exchangeName, queueName);
                     channel.BasicPublish(address, basicProperties, payload);
                 }

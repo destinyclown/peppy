@@ -12,17 +12,5 @@ namespace Peppy
             : base(exchangeName, queueName)
         {
         }
-
-        [AttributeUsage(AttributeTargets.Parameter)]
-        public class FromPeppyAttribute : Attribute
-        {
-        }
-
-        public class PeyypHeader : ReadOnlyDictionary<string, string>
-        {
-            public PeyypHeader(IDictionary<string, string> dictionary) : base(dictionary)
-            {
-            }
-        }
     }
 }
