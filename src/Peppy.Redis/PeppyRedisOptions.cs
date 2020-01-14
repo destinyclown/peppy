@@ -1,27 +1,28 @@
-﻿using Peppy.Core.Options;
-
-namespace Peppy.Redis
+﻿namespace Peppy.Redis
 {
+    /// <summary>
+    /// Redis config Options
+    /// </summary>
     public class PeppyRedisOptions
     {
         /// <summary>
-        /// 地址
+        /// Host
         /// </summary>
         public string HostName { get; set; }
 
         /// <summary>
-        /// 端口
+        /// Port
         /// </summary>
         public string Port { get; set; }
 
         /// <summary>
-        /// 密码
+        /// Password
         /// </summary>
         public string Password { get; set; }
 
         /// <summary>
-        /// 数据库
+        /// Default Database
         /// </summary>
-        public int Defaultdatabase { get; set; }
+        public int DefaultDatabase { get; set; }
     }
 }

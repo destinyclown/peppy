@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5706F6F6-3E2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7379E61E-31AF-4854-8112-AE6CB68E8DF8}"
 	ProjectSection(SolutionItems) = preProject
+		doc\logo.png = doc\logo.png
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -50,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ConsoleApp", "sample
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.WorkerService", "samples\Sample.WorkerService\Sample.WorkerService.csproj", "{074CD8FE-EF1C-482B-B8D6-246E86EA52F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peppy.RabbitMQ", "src\Peppy.RabbitMQ\Peppy.RabbitMQ.csproj", "{6D6CD482-6ADF-4E39-AEEA-F0E182FA9B9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Peppy.RabbitMQ", "src\Peppy.RabbitMQ\Peppy.RabbitMQ.csproj", "{6D6CD482-6ADF-4E39-AEEA-F0E182FA9B9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

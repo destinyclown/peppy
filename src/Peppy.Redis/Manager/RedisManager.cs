@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Peppy.Core;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Peppy.Redis.Manager
@@ -27,26 +26,28 @@ namespace Peppy.Redis.Manager
               _redisOptions.Value.HostName,
               _redisOptions.Value.Port,
               _redisOptions.Value.Password,
-              _redisOptions.Value.Defaultdatabase
+              _redisOptions.Value.DefaultDatabase
             );
             RedisConnection();
         }
 
-        private void RedisConnection()
+        public ConnectionMultiplexer RedisConnection()
         {
             try
             {
                 _logger.LogDebug($"Redis config: {_connStr}");
                 _conn = ConnectionMultiplexer.Connect(_connStr);
                 _logger.LogInformation("Redis manager started!");
+                return _conn;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Redis connection error: {ex.Message}");
+                throw ex;
             }
         }
 
-        private IDatabase GetDatabase()
+        public IDatabase GetDatabase()
         {
             try
             {
@@ -60,9 +61,13 @@ namespace Peppy.Redis.Manager
             }
         }
 
-        public bool Add<TEntity>(string key, TEntity entity, TimeSpan? cacheTime = null) where TEntity : class
+        public bool Set<TEntity>(string key, TEntity entity, TimeSpan? cacheTime = null)
         {
-            var result = GetDatabase().SetAdd(key, entity.ToJson());
+            if (Exists(key))
+            {
+                Remove(key);
+            }
+            var result = GetDatabase().StringSet(key, JsonConvert.SerializeObject(entity));
             if (cacheTime != null)
             {
                 return result && Expire(key, cacheTime.Value);
@@ -70,9 +75,13 @@ namespace Peppy.Redis.Manager
             return result;
         }
 
-        public bool Add<TEntity>(string key, TEntity[] entities, TimeSpan? cacheTime = null) where TEntity : class
+        public bool Set<TEntity>(string key, TEntity[] entities, TimeSpan? cacheTime = null)
         {
-            var redisValues = entities.Select(p => (RedisValue)p.ToJson()).ToArray();
+            if (Exists(key))
+            {
+                Remove(key);
+            }
+            var redisValues = entities.Select(p => (RedisValue)(JsonConvert.SerializeObject(p))).ToArray();
             var result = GetDatabase().SetAdd(key, redisValues) == redisValues.Length;
             if (cacheTime != null)
             {
@@ -81,14 +90,22 @@ namespace Peppy.Redis.Manager
             return result;
         }
 
-        public bool Add<TEntity>(string key, IList<TEntity> entities, TimeSpan? cacheTime = null) where TEntity : class
+        public bool Set<TEntity>(string key, List<TEntity> entities, TimeSpan? cacheTime = null)
         {
-            return Add(key, entities.ToArray(), cacheTime);
+            if (Exists(key))
+            {
+                Remove(key);
+            }
+            return Set(key, entities.ToArray(), cacheTime);
         }
 
-        public async Task<bool> AddAsync<TEntity>(string key, TEntity entity, TimeSpan? cacheTime = null) where TEntity : class
+        public async Task<bool> SetAsync<TEntity>(string key, TEntity entity, TimeSpan? cacheTime = null)
         {
-            var result = await GetDatabase().SetAddAsync(key, entity.ToJson());
+            if (await ExistsAsync(key))
+            {
+                await RemoveAsync(key);
+            }
+            var result = await GetDatabase().StringSetAsync(key, JsonConvert.SerializeObject(entity));
             if (cacheTime != null)
             {
                 return result && await ExpireAsync(key, cacheTime.Value);
@@ -96,9 +113,13 @@ namespace Peppy.Redis.Manager
             return result;
         }
 
-        public async Task<bool> AddAsync<TEntity>(string key, TEntity[] entities, TimeSpan? cacheTime = null) where TEntity : class
+        public async Task<bool> SetAsync<TEntity>(string key, TEntity[] entities, TimeSpan? cacheTime = null)
         {
-            var redisValues = entities.Select(p => (RedisValue)p.ToJson()).ToArray();
+            if (await ExistsAsync(key))
+            {
+                await RemoveAsync(key);
+            }
+            var redisValues = entities.Select(p => (RedisValue)(JsonConvert.SerializeObject(p))).ToArray();
             var result = await GetDatabase().SetAddAsync(key, redisValues) == redisValues.Length;
             if (cacheTime != null)
             {
@@ -107,9 +128,13 @@ namespace Peppy.Redis.Manager
             return result;
         }
 
-        public async Task<bool> AddAsync<TEntity>(string key, IList<TEntity> entities, TimeSpan? cacheTime = null) where TEntity : class
+        public async Task<bool> SetAsync<TEntity>(string key, List<TEntity> entities, TimeSpan? cacheTime = null)
         {
-            return await AddAsync(key, entities.ToArray(), cacheTime);
+            if (await ExistsAsync(key))
+            {
+                await RemoveAsync(key);
+            }
+            return await SetAsync(key, entities.ToArray(), cacheTime);
         }
 
         public long Count(string key)
@@ -120,6 +145,16 @@ namespace Peppy.Redis.Manager
         public async Task<long> CountAsync(string key)
         {
             return await GetDatabase().ListLengthAsync(key);
+        }
+
+        public bool Exists(string key)
+        {
+            return GetDatabase().KeyExists(key);
+        }
+
+        public async Task<bool> ExistsAsync(string key)
+        {
+            return await GetDatabase().KeyExistsAsync(key);
         }
 
         public bool Expire(string key, TimeSpan cacheTime)
@@ -139,11 +174,11 @@ namespace Peppy.Redis.Manager
 
         public bool Remove(string[] keys)
         {
-            var redisKeys = keys.Select(p => (RedisKey)p.ToJson()).ToArray();
+            var redisKeys = keys.Select(p => (RedisKey)(JsonConvert.SerializeObject(p))).ToArray();
             return GetDatabase().KeyDelete(redisKeys) == redisKeys.Length;
         }
 
-        public bool Remove(IList<string> keys)
+        public bool Remove(List<string> keys)
         {
             return Remove(keys.ToArray());
         }
@@ -155,43 +190,113 @@ namespace Peppy.Redis.Manager
 
         public async Task<bool> RemoveAsync(string[] keys)
         {
-            var redisKeys = keys.Select(p => (RedisKey)p.ToJson()).ToArray();
+            var redisKeys = keys.Select(p => (RedisKey)(JsonConvert.SerializeObject(p))).ToArray();
             return await GetDatabase().KeyDeleteAsync(redisKeys) == redisKeys.Length;
         }
 
-        public async Task<bool> RemoveAsync(IList<string> keys)
+        public async Task<bool> RemoveAsync(List<string> keys)
         {
             return await RemoveAsync(keys.ToArray());
         }
 
-        public bool Update<TEntity>(string key, TEntity entity, TimeSpan? cacheTime = null) where TEntity : class
+        public string BlockingDequeue(string key)
         {
-            return Add(key, entity, cacheTime);
+            return GetDatabase().ListRightPop(key);
         }
 
-        public bool Update<TEntity>(string key, TEntity[] entities, TimeSpan? cacheTime = null) where TEntity : class
+        public async Task<string> BlockingDequeueAsync(string key)
         {
-            return Add(key, entities, cacheTime);
+            return await GetDatabase().ListRightPopAsync(key);
         }
 
-        public bool Update<TEntity>(string key, IList<TEntity> entities, TimeSpan? cacheTime = null) where TEntity : class
+        public void Enqueue<TEntity>(string key, TEntity entity)
         {
-            return Add(key, entities, cacheTime);
+            GetDatabase().ListLeftPush(key, JsonConvert.SerializeObject(entity));
         }
 
-        public async Task<bool> UpdateAsync<TEntity>(string key, TEntity entity, TimeSpan? cacheTime = null) where TEntity : class
+        public async Task EnqueueAsync<TEntity>(string key, TEntity entity)
         {
-            return await AddAsync(key, entity, cacheTime);
+            await GetDatabase().ListLeftPushAsync(key, JsonConvert.SerializeObject(entity));
         }
 
-        public async Task<bool> UpdateAsync<TEntity>(string key, TEntity[] entities, TimeSpan? cacheTime = null) where TEntity : class
+        public long Increment(string key)
         {
-            return await AddAsync(key, entities, cacheTime);
+            return GetDatabase().StringIncrement(key, flags: CommandFlags.FireAndForget);
         }
 
-        public async Task<bool> UpdateAsync<TEntity>(string key, IList<TEntity> entities, TimeSpan? cacheTime = null) where TEntity : class
+        public async Task<long> IncrementAsync(string key)
         {
-            return await AddAsync(key, entities, cacheTime);
+            return await GetDatabase().StringIncrementAsync(key, flags: CommandFlags.FireAndForget);
+        }
+
+        public long Decrement(string key, string value)
+        {
+            return GetDatabase().HashDecrement(key, value, flags: CommandFlags.FireAndForget);
+        }
+
+        public async Task<long> DecrementAsync(string key, string value)
+        {
+            return await GetDatabase().HashDecrementAsync(key, value, flags: CommandFlags.FireAndForget);
+        }
+
+        public TEntity Get<TEntity>(string key)
+        {
+            if (!Exists(key))
+            {
+                return default;
+            }
+            var result = GetDatabase().StringGet(key);
+            return JsonConvert.DeserializeObject<TEntity>(result);
+        }
+
+        public List<TEntity> GetList<TEntity>(string key)
+        {
+            if (!Exists(key))
+            {
+                return null;
+            }
+            var result = GetDatabase().SetMembers(key);
+            return result.Select(p => JsonConvert.DeserializeObject<TEntity>(p)).ToList();
+        }
+
+        public TEntity[] GetArray<TEntity>(string key)
+        {
+            if (!Exists(key))
+            {
+                return null;
+            }
+            var result = GetDatabase().SetMembers(key);
+            return result.Select(p => JsonConvert.DeserializeObject<TEntity>(p)).ToArray();
+        }
+
+        public async Task<TEntity> GetAsync<TEntity>(string key)
+        {
+            if (!await ExistsAsync(key))
+            {
+                return default;
+            }
+            var result = await GetDatabase().StringGetAsync(key);
+            return JsonConvert.DeserializeObject<TEntity>(result);
+        }
+
+        public async Task<List<TEntity>> GetListAsync<TEntity>(string key)
+        {
+            if (!await ExistsAsync(key))
+            {
+                return null;
+            }
+            var result = await GetDatabase().SetMembersAsync(key);
+            return result.Select(p => JsonConvert.DeserializeObject<TEntity>(p)).ToList();
+        }
+
+        public async Task<TEntity[]> GetArrayAsync<TEntity>(string key)
+        {
+            if (!await ExistsAsync(key))
+            {
+                return null;
+            }
+            var result = await GetDatabase().SetMembersAsync(key);
+            return result.Select(p => JsonConvert.DeserializeObject<TEntity>(p)).ToArray();
         }
     }
 }
