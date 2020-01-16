@@ -8,7 +8,7 @@
     <PackageIcon>logo.png</PackageIcon>
     <PackageIconUrl />
     <PackageProjectUrl>https://github.com/starmile0/peppy</PackageProjectUrl>
-    <PackageTags>Peppy, AspDotNet Core, DotNet Core</PackageTags>
+    <PackageTags>Peppy, Autofac, Ioc, AspDotNet Core, DotNet Core</PackageTags>
     <Description>DotNet Core high performance MySql manage</Description>
     <Version>1.0.0</Version>
     <SignAssembly>false</SignAssembly>
@@ -20,20 +20,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ApiWidgets\**" />
-    <EmbeddedResource Remove="ApiWidgets\**" />
-    <None Remove="ApiWidgets\**" />
-    <None Include="..\..\doc\logo.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.4.1" />
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Peppy\Peppy.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\doc\logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

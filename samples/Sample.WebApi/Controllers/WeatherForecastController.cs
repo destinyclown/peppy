@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Peppy;
 using Peppy.Core;
+using Peppy.EntityFrameworkCore;
 using Peppy.RabbitMQ;
 using Peppy.Redis;
+using Sample.WebApi.Repositories;
 
 namespace Sample.WebApi.Controllers
 {
@@ -24,6 +26,8 @@ namespace Sample.WebApi.Controllers
         //private readonly ICapPublisher _capBus;
         private readonly ILogger<WeatherForecastController> _logger;
 
+        private readonly IPersonPepository _personPepository;
+        private readonly AppDbContext _appDbContext;
         private readonly IRedisManager _redisManager;
         private readonly IRabbitMQManager _rabbitMQManager;
         private readonly ClientRegister _clientRegister;
@@ -32,6 +36,8 @@ namespace Sample.WebApi.Controllers
             ILogger<WeatherForecastController> logger,
             //ICapPublisher capPublisher,
             //IRedisManager redisManager,
+            IPersonPepository personPepository,
+            AppDbContext appDbContext,
             ClientRegister clientRegister,
             IRabbitMQManager rabbitMQManager)
         {
@@ -40,12 +46,15 @@ namespace Sample.WebApi.Controllers
             //_redisManager = redisManager;
             _clientRegister = clientRegister;
             _rabbitMQManager = rabbitMQManager;
+            _appDbContext = appDbContext;
+            _personPepository = personPepository;
         }
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get([FromServices]AppDbContext dbContext)
         {
-            _rabbitMQManager.SendMsgAsync("test", "test", new TestModel { Date = DateTime.Now });
+            var person = _personPepository.Single();
+            //_rabbitMQManager.SendMsgAsync("test", "test", new TestModel { Date = DateTime.Now });
             //_redisManager.Add("test", "test");
             //_client.OnConsumerReceived(null, new EventArgs());
             //using (var trans = dbContext.Database.BeginTransaction(_capBus, autoCommit: false))

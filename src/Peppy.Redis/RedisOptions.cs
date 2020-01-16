@@ -3,7 +3,7 @@
     /// <summary>
     /// Redis config Options
     /// </summary>
-    public class PeppyRedisOptions
+    public class RedisOptions
     {
         /// <summary>
         /// Host

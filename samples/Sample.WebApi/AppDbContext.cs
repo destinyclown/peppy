@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Peppy.Domain.Entities;
 
 namespace Sample.WebApi
 {
-    public class Person
+    public class Person : IEntity<int>
     {
         public int Id { get; set; }
 

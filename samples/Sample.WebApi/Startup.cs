@@ -2,12 +2,17 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Peppy;
+using Peppy.Autofac;
+using Peppy.Dependency;
 using Peppy.Extensions;
 
 namespace Sample.WebApi
@@ -24,7 +29,7 @@ namespace Sample.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>();
+            //services.AddDbContext<AppDbContext>();
             //services.AddCap(x =>
             //{
             //    x.UseEntityFramework<AppDbContext>();
@@ -43,7 +48,12 @@ namespace Sample.WebApi
             //    options.Port = "6379";
             //    options.Defaultdatabase = 0;
             //});
-            services.AddPeppyRedis(Configuration);
+            services.AddPeppy(options =>
+            {
+                options.UseEntityFrameworkCore<AppDbContext>();
+            });
+            services.AddRedis(Configuration);
+
             services.AddPeppyRabbitMQ(options =>
             {
                 options.HostName = "134.175.159.22";
@@ -51,6 +61,11 @@ namespace Sample.WebApi
                 options.Password = "bailun2019";
             });
             services.AddControllers();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new PeppyModule(typeof(IDependency), new Assembly[] { Assembly.GetExecutingAssembly() }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

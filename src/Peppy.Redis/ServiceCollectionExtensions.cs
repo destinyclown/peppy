@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Peppy.Redis;
 using Peppy.Redis.Manager;
 using System;
 
-namespace Peppy.Extensions
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     /// Extensions method
@@ -17,7 +16,7 @@ namespace Peppy.Extensions
         /// <param name="services"></param>
         /// <param name="options">Redis config Options</param>
         /// <returns></returns>
-        public static IServiceCollection AddPeppyRedis(this IServiceCollection services, Action<PeppyRedisOptions> options)
+        public static IServiceCollection AddRedis(this IServiceCollection services, Action<RedisOptions> options)
         {
             if (options == null)
             {
@@ -34,9 +33,9 @@ namespace Peppy.Extensions
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddPeppyRedis(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<PeppyRedisOptions>(configuration.GetSection("Redis"));
+            services.Configure<RedisOptions>(configuration.GetSection("Redis"));
             services.AddSingleton<IRedisManager, RedisManager>();
             return services;
         }

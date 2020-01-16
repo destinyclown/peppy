@@ -1,5 +1,4 @@
-﻿using Peppy.Core.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -52,6 +51,42 @@ namespace Sample.ConsoleApp
             //ExcelHelper.GridToExcelByNPOI(result, @"C:\Users\75795\Desktop\test1.xlsx");
 
             #endregion 散落统计
+
+            //记录开始时间
+
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            int num = 100000000;
+            for (int i = 0; i < num; i++)
+            {
+                BubbleSort(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+            }
+
+            stopwatch.Stop();
+            Console.WriteLine((stopwatch.ElapsedMilliseconds / 1000m).ToString("0.000") + "s");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <param name=""></param>
+        /// <param name=""></param>
+        public static void BubbleSort(int[] arr)
+        {
+            var len = arr.Length;
+            for (int i = 0; i < len - 1; i++)
+            {
+                for (int j = 0; j < len - 1 - i; j++)
+                {
+                    if (arr[j] < arr[j + 1])
+                    {
+                        int temp = arr[j];
+                        arr[j] = arr[j + 1];
+                        arr[j + 1] = temp;
+                    }
+                }
+            }
         }
     }
 

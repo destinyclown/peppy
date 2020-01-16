@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/starmile0/peppy</RepositoryUrl>
@@ -10,9 +10,13 @@
     <PackageProjectUrl>https://github.com/starmile0/peppy</PackageProjectUrl>
     <PackageTags>Peppy, Redis, AspDotNet Core, DotNet Core</PackageTags>
     <Description>DotNet Core high performance Redis manage, incorporating both synchronous and asynchronous usage.</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <SignAssembly>false</SignAssembly>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Product>Peppy</Product>
+    <Company>starmile;peppy</Company>
+    <Authors>starmile</Authors>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>

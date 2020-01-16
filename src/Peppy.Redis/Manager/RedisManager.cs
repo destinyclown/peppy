@@ -12,13 +12,13 @@ namespace Peppy.Redis.Manager
     internal sealed class RedisManager : IRedisManager
     {
         private readonly ILogger<RedisManager> _logger;
-        private readonly IOptions<PeppyRedisOptions> _redisOptions;
+        private readonly IOptions<RedisOptions> _redisOptions;
         private ConnectionMultiplexer _conn;
         private static string _connStr;
 
         public RedisManager(
             ILogger<RedisManager> logger,
-            IOptions<PeppyRedisOptions> redisOptions)
+            IOptions<RedisOptions> redisOptions)
         {
             _logger = logger;
             _redisOptions = redisOptions;
