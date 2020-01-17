@@ -3,10 +3,8 @@ using Peppy.Domain.Entities;
 
 namespace Sample.WebApi
 {
-    public class Person : IEntity<int>
+    public class Person : Entity<int>
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
 
         public override string ToString()

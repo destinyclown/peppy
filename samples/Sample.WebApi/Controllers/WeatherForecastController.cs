@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNetCore.CAP;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Peppy;
 using Peppy.Core;
@@ -51,9 +52,11 @@ namespace Sample.WebApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get([FromServices]AppDbContext dbContext)
+        public async Task<IEnumerable<Person>> Get([FromServices]AppDbContext dbContext)
         {
-            var person = _personPepository.Single();
+            //await _personPepository.BatchDeleteAsync(x => x.Id > 1);
+            //await _personPepository.Query().Where(x => x.Name == "test").DeleteFromQueryAsync();
+            var persons = await _personPepository.QueryListAsync();
             //_rabbitMQManager.SendMsgAsync("test", "test", new TestModel { Date = DateTime.Now });
             //_redisManager.Add("test", "test");
             //_client.OnConsumerReceived(null, new EventArgs());
@@ -66,14 +69,7 @@ namespace Sample.WebApi.Controllers
             //    dbContext.SaveChanges();
             //    trans.Commit();
             //}
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return persons;
         }
 
         [NonAction]

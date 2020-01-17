@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Peppy.Autofac\Peppy.Autofac.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Core\Peppy.Core.csproj" />
+    <ProjectReference Include="..\..\src\Peppy.EntityFrameworkCore.Plus\Peppy.EntityFrameworkCore.Plus.csproj" />
     <ProjectReference Include="..\..\src\Peppy.EntityFrameworkCore\Peppy.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Peppy.RabbitMQ\Peppy.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Redis\Peppy.Redis.csproj" />
