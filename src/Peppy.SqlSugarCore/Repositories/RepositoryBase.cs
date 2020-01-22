@@ -1,16 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Peppy.Dependency;
 using Peppy.Domain.Entities;
-using Peppy.Domain.Repositories;
+using SqlSugar;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace Peppy.EntityFrameworkCore.Repositories
+namespace Peppy.SqlSugarCore.Repositories
 {
     /// <summary>
     /// Implements IRepository for Entity Framework Core
@@ -18,81 +18,54 @@ namespace Peppy.EntityFrameworkCore.Repositories
     /// <typeparam name="TDbContext"></typeparam>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TPrimaryKey"></typeparam>
-    public abstract class RepositoryBase<TDbContext, TEntity, TPrimaryKey> : IScopedDependency
-            where TDbContext : DbContext
-            where TEntity : class, IEntity<TPrimaryKey>
+    public abstract class RepositoryBase<TEntity, TPrimaryKey> : IScopedDependency
+            where TEntity : class, IEntity<TPrimaryKey>, new()
     {
-        /// <summary>
-        ///
-        /// </summary>
-        public virtual TDbContext Context { get; }
+        private readonly SqlSugarCoreOptions _options;
 
-        /// <summary>
-        ///
-        /// </summary>
-        public virtual DbSet<TEntity> Table => Context.Set<TEntity>();
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="dbContextProvider"></param>
-        public RepositoryBase(IDbContextProvider<TDbContext> dbContextProvider)
+        public RepositoryBase(IDbContextProvider dbContextProvider)
         {
-            Context = dbContextProvider.GetDbContext();
+            _options = dbContextProvider.GetOptions();
         }
 
         #region Qurey
 
         /// <summary>
-        /// Used to get a IQueryable that is used to retrieve entities from entire table.
+        /// Create SqlSugarClient
         /// </summary>
-        /// <returns>IQueryable to be used to select entities from database</returns>
-        protected virtual IQueryable<TEntity> Query()
+        /// <returns></returns>
+        private SqlSugarClient Query()
         {
-            if (!(Context.Set<TEntity>() is IQueryable<TEntity> query))
-                throw new Exception($"{typeof(TEntity)} TEntity cannot be empty！");
-            return query;
-        }
-
-        /// <summary>
-        /// Used to get a IQueryable that is used to retrieve entities from entire table.
-        /// </summary>
-        /// <param name="propertySelectors"></param>
-        /// <returns>IQueryable to be used to select entities from database</returns>
-        protected virtual IQueryable<TEntity> QueryIncluding(params Expression<Func<TEntity, object>>[] propertySelectors)
-        {
-            if (propertySelectors == null || propertySelectors.Count() <= 0)
+            SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
             {
-                return Query();
-            }
+                ConnectionString = _options.ConnectionString,
+                DbType = _options.DbType,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
 
-            var query = Query();
-
-            foreach (var propertySelector in propertySelectors)
+            //Print sql
+            db.Aop.OnLogExecuting = (sql, pars) =>
             {
-                query = query.Include(propertySelector);
-            }
-
-            return query;
-        }
-
-        /// <summary>
-        /// Used to query a array of entities from datatable
-        /// </summary>
-        /// <returns>Array of entities</returns>
-        protected virtual async Task<TEntity[]> QueryArrayAsync()
-        {
-            return await Query().ToArrayAsync();
-        }
-
-        /// <summary>
-        /// Used to query a array of entities from datatable by predicate
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns>Array of entities</returns>
-        protected virtual async Task<TEntity[]> QueryArrayAsync(Expression<Func<TEntity, bool>> predicate)
-        {
-            return await Query().Where(predicate).ToArrayAsync();
+                if (db.TempItems == null) db.TempItems = new Dictionary<string, object>();
+                db.TempItems.Add("logTime", DateTime.Now);
+            };
+            db.Aop.OnLogExecuted = (sql, pars) =>
+            {
+                var startingTime = (DateTime)db.TempItems["logTime"];
+                db.TempItems.Remove("logtime");
+                var completedTime = DateTime.Now;
+                var tiemOut = completedTime.Subtract(startingTime);
+                if (pars.Any())
+                {
+                    SqlLoggerUtil.LogSql(sql, pars, tiemOut);
+                }
+                else
+                {
+                    SqlLoggerUtil.LogSql(sql, tiemOut);
+                }
+            };
+            return db;
         }
 
         /// <summary>
@@ -101,7 +74,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>List of entities</returns>
         protected virtual async Task<List<TEntity>> QueryListAsync()
         {
-            return await Query().ToListAsync();
+            return await Query().Queryable<TEntity>().ToListAsync();
         }
 
         /// <summary>
@@ -111,7 +84,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>List of entities</returns>
         protected virtual async Task<List<TEntity>> QueryListAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
-            return await Query().Where(predicate).ToListAsync();
+            return await Query().Queryable<TEntity>().Where(predicate).ToListAsync();
         }
 
         /// <summary>
@@ -121,7 +94,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>Entity</returns>
         protected virtual async Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await Query().SingleAsync(predicate);
+            return await Query().Queryable<TEntity>().SingleAsync(predicate);
         }
 
         /// <summary>
@@ -131,7 +104,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>Entity</returns>
         protected virtual async Task<TEntity> FirstOrDefaultAsync(TPrimaryKey id)
         {
-            return await Query().FirstOrDefaultAsync(CreateEqualityExpressionForId(id));
+            return await Query().Queryable<TEntity>().FirstAsync(CreateEqualityExpressionForId(id));
         }
 
         /// <summary>
@@ -140,7 +113,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <param name="predicate">Predicate to filter entities</param>
         protected virtual async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await Query().FirstOrDefaultAsync(predicate);
+            return await Query().Queryable<TEntity>().FirstAsync(predicate);
         }
 
         #endregion Qurey
@@ -154,8 +127,8 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>Inserted entity</returns>
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
-            var result = await Table.AddAsync(entity);
-            return result?.Entity;
+            var result = await Query().Insertable(entity).ExecuteCommandAsync();
+            return entity;
         }
 
         /// <summary>
@@ -165,13 +138,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>Id of the entity</returns>
         public virtual async Task<TPrimaryKey> InsertAndGetIdAsync(TEntity entity)
         {
-            entity = await InsertAsync(entity);
-
-            if (entity.IsTransient())
-            {
-                await Context.SaveChangesAsync();
-            }
-
+            await Query().Insertable(entity).ExecuteReturnIdentityAsync();
             return entity.Id;
         }
 
@@ -186,9 +153,8 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns></returns>
         public virtual async Task<TEntity> UpdateAsync(TEntity entity)
         {
-            AttachIfNot(entity);
-            Context.Entry(entity).State = EntityState.Modified;
-            return await Task.FromResult(entity);
+            var result = await Query().Updateable(entity).ExecuteCommandAsync();
+            return entity;
         }
 
         /// <summary>
@@ -199,7 +165,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>Updated entity</returns>
         public virtual async Task<TEntity> UpdateAsync(TPrimaryKey id, Func<TEntity, Task> updateAction)
         {
-            var entity = await FirstOrDefaultAsync(id);
+            var entity = await Query().Queryable<TEntity>().FirstAsync(x => x.Id.Equals(id));
             await updateAction(entity);
             return entity;
         }
@@ -215,7 +181,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>Entity to be deleted</returns>
         public virtual async Task DeleteAsync(TEntity entity)
         {
-            await Task.FromResult(Table.Remove(entity));
+            await Query().Deleteable(entity).ExecuteCommandAsync();
         }
 
         /// <summary>
@@ -225,10 +191,10 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>Primary key of the entity</returns>
         public virtual async Task DeleteAsync(TPrimaryKey id)
         {
-            var entity = Table.Local.FirstOrDefault(ent => EqualityComparer<TPrimaryKey>.Default.Equals(ent.Id, id));
+            var entity = await Query().Queryable<TEntity>().FirstAsync(ent => EqualityComparer<TPrimaryKey>.Default.Equals(ent.Id, id));
             if (entity == null)
             {
-                entity = await Query().FirstOrDefaultAsync(CreateEqualityExpressionForId(id));
+                entity = await Query().Queryable<TEntity>().FirstAsync(CreateEqualityExpressionForId(id));
                 if (entity == null)
                 {
                     return;
@@ -241,18 +207,6 @@ namespace Peppy.EntityFrameworkCore.Repositories
         #endregion Delete
 
         #region Expression
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="entity"></param>
-        protected virtual void AttachIfNot(TEntity entity)
-        {
-            if (!Table.Local.Contains(entity))
-            {
-                Table.Attach(entity);
-            }
-        }
 
         /// <summary>
         ///

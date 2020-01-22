@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Peppy.Domain.Entities;
+using Peppy.SqlSugarCore.Entities;
+using SqlSugar;
 
 namespace Sample.WebApi
 {
-    public class Person : Entity<int>
+    [SugarTable("Persons")]
+    public class Person : SqlSugarEntity<int>
     {
         public string Name { get; set; }
 

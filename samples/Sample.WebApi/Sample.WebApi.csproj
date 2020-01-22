@@ -5,20 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetCore.CAP" Version="3.0.0-preview-93361469" />
-    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="3.0.0-preview-93361469" />
-    <PackageReference Include="DotNetCore.CAP.MySql" Version="3.0.0-preview-93361469" />
-    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="3.0.0-preview-93361469" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Peppy.Autofac\Peppy.Autofac.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Core\Peppy.Core.csproj" />
-    <ProjectReference Include="..\..\src\Peppy.EntityFrameworkCore.Plus\Peppy.EntityFrameworkCore.Plus.csproj" />
-    <ProjectReference Include="..\..\src\Peppy.EntityFrameworkCore\Peppy.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Peppy.RabbitMQ\Peppy.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Redis\Peppy.Redis.csproj" />
+    <ProjectReference Include="..\..\src\Peppy.SqlSugarCore\Peppy.SqlSugarCore.csproj" />
   </ItemGroup>
 
   <ProjectExtensions>

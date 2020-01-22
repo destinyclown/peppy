@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DotNetCore.CAP;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Peppy;
 using Peppy.Core;
-using Peppy.EntityFrameworkCore;
 using Peppy.RabbitMQ;
 using Peppy.Redis;
 using Sample.WebApi.Repositories;
@@ -28,7 +25,6 @@ namespace Sample.WebApi.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
 
         private readonly IPersonPepository _personPepository;
-        private readonly AppDbContext _appDbContext;
         private readonly IRedisManager _redisManager;
         private readonly IRabbitMQManager _rabbitMQManager;
         private readonly ClientRegister _clientRegister;
@@ -38,7 +34,6 @@ namespace Sample.WebApi.Controllers
             //ICapPublisher capPublisher,
             //IRedisManager redisManager,
             IPersonPepository personPepository,
-            AppDbContext appDbContext,
             ClientRegister clientRegister,
             IRabbitMQManager rabbitMQManager)
         {
@@ -47,16 +42,19 @@ namespace Sample.WebApi.Controllers
             //_redisManager = redisManager;
             _clientRegister = clientRegister;
             _rabbitMQManager = rabbitMQManager;
-            _appDbContext = appDbContext;
             _personPepository = personPepository;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Person>> Get([FromServices]AppDbContext dbContext)
+        public async Task<IEnumerable<Person>> Get()
         {
             //await _personPepository.BatchDeleteAsync(x => x.Id > 1);
             //await _personPepository.Query().Where(x => x.Name == "test").DeleteFromQueryAsync();
             var persons = await _personPepository.QueryListAsync();
+            var person = persons.FirstOrDefault();
+            person.Name = "test";
+            await _personPepository.UpdateAsync(person);
+            persons = await _personPepository.QueryListAsync();
             //_rabbitMQManager.SendMsgAsync("test", "test", new TestModel { Date = DateTime.Now });
             //_redisManager.Add("test", "test");
             //_client.OnConsumerReceived(null, new EventArgs());

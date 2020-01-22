@@ -25,64 +25,64 @@ namespace Peppy.Domain.Repositories
     {
         #region Qurey
 
-        /// <summary>
-        /// Used to get a IQueryable that is used to retrieve entities from entire table.
-        /// </summary>
-        /// <returns>IQueryable to be used to select entities from database</returns>
-        IQueryable<TEntity> Query();
+        ///// <summary>
+        ///// Used to get a IQueryable that is used to retrieve entities from entire table.
+        ///// </summary>
+        ///// <returns>IQueryable to be used to select entities from database</returns>
+        //IQueryable<TEntity> Query();
 
-        /// <summary>
-        /// Used to get a IQueryable that is used to retrieve entities from entire table.
-        /// </summary>
-        /// <param name="propertySelectors"></param>
-        /// <returns>IQueryable to be used to select entities from database</returns>
-        IQueryable<TEntity> QueryIncluding(params Expression<Func<TEntity, object>>[] propertySelectors);
+        ///// <summary>
+        ///// Used to get a IQueryable that is used to retrieve entities from entire table.
+        ///// </summary>
+        ///// <param name="propertySelectors"></param>
+        ///// <returns>IQueryable to be used to select entities from database</returns>
+        //IQueryable<TEntity> QueryIncluding(params Expression<Func<TEntity, object>>[] propertySelectors);
 
-        /// <summary>
-        /// Used to query a array of entities from datatable
-        /// </summary>
-        /// <returns>Array of entities</returns>
-        Task<TEntity[]> QueryArrayAsync();
+        ///// <summary>
+        ///// Used to query a array of entities from datatable
+        ///// </summary>
+        ///// <returns>Array of entities</returns>
+        //Task<TEntity[]> QueryArrayAsync();
 
-        /// <summary>
-        /// Used to query a array of entities from datatable by predicate
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns>Array of entities</returns>
-        Task<TEntity[]> QueryArrayAsync(Expression<Func<TEntity, bool>> predicate);
+        ///// <summary>
+        ///// Used to query a array of entities from datatable by predicate
+        ///// </summary>
+        ///// <param name="predicate"></param>
+        ///// <returns>Array of entities</returns>
+        ////Task<TEntity[]> QueryArrayAsync(Expression<Func<TEntity, bool>> predicate);
 
-        /// <summary>
-        /// Used to query a list of entities from datatable
-        /// </summary>
-        /// <returns>List of entities</returns>
-        Task<List<TEntity>> QueryListAsync();
+        ///// <summary>
+        ///// Used to query a list of entities from datatable
+        ///// </summary>
+        ///// <returns>List of entities</returns>
+        //Task<List<TEntity>> QueryListAsync();
 
-        /// <summary>
-        /// Used to query a list of entities from datatable by predicate
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns>List of entities</returns>
-        Task<List<TEntity>> QueryListAsync(Expression<Func<TEntity, bool>> predicate);
+        ///// <summary>
+        ///// Used to query a list of entities from datatable by predicate
+        ///// </summary>
+        ///// <param name="predicate"></param>
+        ///// <returns>List of entities</returns>
+        ////Task<List<TEntity>> QueryListAsync(Expression<Func<TEntity, bool>> predicate);
 
-        /// <summary>
-        /// Used to query a single entity from datatable by predicate
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns>Entity</returns>
-        Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate);
+        ///// <summary>
+        ///// Used to query a single entity from datatable by predicate
+        ///// </summary>
+        ///// <param name="predicate"></param>
+        ///// <returns>Entity</returns>
+        //Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate);
 
-        /// <summary>
-        /// Used to query a first Or default entity by it's primary key id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Entity</returns>
-        Task<TEntity> FirstOrDefaultAsync(TPrimaryKey id);
+        ///// <summary>
+        ///// Used to query a first Or default entity by it's primary key id
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns>Entity</returns>
+        //Task<TEntity> FirstOrDefaultAsync(TPrimaryKey id);
 
-        /// <summary>
-        /// Gets an entity with given given predicate or null if not found.
-        /// </summary>
-        /// <param name="predicate">Predicate to filter entities</param>
-        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+        ///// <summary>
+        ///// Gets an entity with given given predicate or null if not found.
+        ///// </summary>
+        ///// <param name="predicate">Predicate to filter entities</param>
+        //Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
 
         #endregion Qurey
 

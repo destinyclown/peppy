@@ -50,7 +50,12 @@ namespace Sample.WebApi
             //});
             services.AddPeppy(options =>
             {
-                options.UseEntityFrameworkCore<AppDbContext>();
+                options.UseSqlSugarCore(
+                    sugar =>
+                    {
+                        sugar.DbType = SqlSugar.DbType.MySql;
+                        sugar.ConnectionString = Configuration.GetConnectionString("Default");
+                    });
             });
             services.AddRedis(Configuration);
 
