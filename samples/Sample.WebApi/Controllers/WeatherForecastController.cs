@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NPOI.SS.Formula.Functions;
 using Peppy;
 using Peppy.Core;
 using Peppy.RabbitMQ;
 using Peppy.Redis;
 using Sample.WebApi.Repositories;
+using Peppy.Extensions;
 
 namespace Sample.WebApi.Controllers
 {
@@ -55,6 +58,7 @@ namespace Sample.WebApi.Controllers
             person.Name = "test";
             await _personPepository.UpdateAsync(person);
             persons = await _personPepository.QueryListAsync();
+            //Expression.Lambda<Func<T, bool>>(Expression.AndAlso(expr1.Body, expr2.Body), expr1.Parameters);
             //_rabbitMQManager.SendMsgAsync("test", "test", new TestModel { Date = DateTime.Now });
             //_redisManager.Add("test", "test");
             //_client.OnConsumerReceived(null, new EventArgs());

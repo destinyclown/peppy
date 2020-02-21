@@ -19,7 +19,7 @@ namespace Peppy.RabbitMQ
     {
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly IServiceProvider _serviceProvider;
-        private readonly IRabbitMQManager _rabbitMQManager;
+        private readonly IRabbitMQManager _rabbitMqManager;
         private ISubscribeInvoker Invoker { get; }
 
         public ClientRegister(
@@ -27,7 +27,7 @@ namespace Peppy.RabbitMQ
             IRabbitMQManager rabbitMQManager)
         {
             _serviceProvider = serviceProvider;
-            _rabbitMQManager = rabbitMQManager;
+            _rabbitMqManager = rabbitMQManager;
             Invoker = _serviceProvider.GetService<ISubscribeInvokerFactory>().CreateInvoker();
             Start();
         }
@@ -38,14 +38,15 @@ namespace Peppy.RabbitMQ
             foreach (var matchGroup in groupingMatches)
             {
                 RegisterMessageProcessor(matchGroup);
-                _rabbitMQManager.Listening(matchGroup.Attribute.ExchangeName, matchGroup.Attribute.QueueName);
+                _rabbitMqManager.Listening(matchGroup.Attribute.ExchangeName, matchGroup.Attribute.QueueName);
             }
         }
 
         private IEnumerable<ConsumerExecutorDescriptor> FindFromControllerTypes()
         {
             var executorDescriptorList = new List<ConsumerExecutorDescriptor>();
-            var types = Assembly.GetEntryAssembly().ExportedTypes;
+            var types = Assembly.GetEntryAssembly()?.ExportedTypes;
+            if (types == null) return executorDescriptorList;
             foreach (var type in types)
             {
                 var typeInfo = type.GetTypeInfo();
@@ -89,22 +90,22 @@ namespace Peppy.RabbitMQ
 
         private void RegisterMessageProcessor(ConsumerExecutorDescriptor descriptor)
         {
-            _rabbitMQManager.OnMessageReceived += async (sender, transportMessage) =>
+            _rabbitMqManager.OnMessageReceived += async (sender, transportMessage) =>
             {
                 try
                 {
-                    _rabbitMQManager.CreateConnect(descriptor.Attribute.ExchangeName, descriptor.Attribute.QueueName);
+                    _rabbitMqManager.CreateConnect(descriptor.Attribute.ExchangeName, descriptor.Attribute.QueueName);
                     var message = new Message(transportMessage.Headers, Encoding.UTF8.GetString(transportMessage.Body));
                     var value = message.Value.ToString().ToObject<Message>();
                     var consumerContext = new ConsumerContext(descriptor, value);
                     await Invoker.InvokeAsync(consumerContext, _cts.Token);
-                    _rabbitMQManager.Commit(sender);
+                    _rabbitMqManager.Commit(sender);
                     //_rabbitMQManager.Receive(descriptor.Attribute.ExchangeName, descriptor.Attribute.QueueName, (T) => Invoker.InvokeAsync(consumerContext, _cts.Token).GetAwaiter().GetResult());
                     //_rabbitMQManager.Commit(sender);
                 }
                 catch (Exception ex)
                 {
-                    _rabbitMQManager.Commit(sender);
+                    _rabbitMqManager.Commit(sender);
                     //_rabbitMQManager.Reject(sender);
                 }
             };

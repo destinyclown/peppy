@@ -16,6 +16,21 @@ namespace Sample.WebApi
         }
     }
 
+    public class Student
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class Grade
+    {
+        public int Id { get; set; }
+
+        public int StudentId { get; set; }
+
+        public decimal Fraction { get; set; }
+    }
+
     public class Person2
     {
         public int Id { get; set; }
