@@ -14,6 +14,8 @@ using Peppy;
 using Peppy.Autofac;
 using Peppy.Dependency;
 using Peppy.Extensions;
+using Quartz;
+using Quartz.Impl;
 
 namespace Sample.WebApi
 {
@@ -65,6 +67,7 @@ namespace Sample.WebApi
                 options.UserName = "bailun";
                 options.Password = "bailun2019";
             });
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
             services.AddControllers();
         }
 

@@ -11,13 +11,6 @@ namespace Peppy.Extensions
     /// <remarks>常规的方式不能直接拼接表达式</remarks>
     public static class ExpressionExtensions
     {
-        public static T If<T>(this T t, Predicate<T> predicate, Action<T> action)
-        {
-            if (predicate(t))
-                action(t);
-            return t;
-        }
-
         /// <summary>
         /// And
         /// </summary>

@@ -67,9 +67,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{634C7B5F-5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Peppy.SqlSugarCore", "src\Peppy.SqlSugarCore\Peppy.SqlSugarCore.csproj", "{286B69A1-08EB-46AF-97EC-94504C9C3F3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peppy.Extensions", "src\Peppy.Extensions\Peppy.Extensions.csproj", "{A28AB000-ED73-472B-BC01-682E3E7C64CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Peppy.Extensions", "src\Peppy.Extensions\Peppy.Extensions.csproj", "{A28AB000-ED73-472B-BC01-682E3E7C64CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peppy.UnitTest", "test\Peppy.UnitTest\Peppy.UnitTest.csproj", "{0391B72E-7839-4597-92E9-9F653442752D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Peppy.UnitTest", "test\Peppy.UnitTest\Peppy.UnitTest.csproj", "{0391B72E-7839-4597-92E9-9F653442752D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "job", "job", "{9DD525FC-53E6-4B77-A59C-FB50DBDFFFED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -196,6 +198,7 @@ Global
 		{286B69A1-08EB-46AF-97EC-94504C9C3F3B} = {B0535659-A82A-4679-9759-0CF25609C000}
 		{A28AB000-ED73-472B-BC01-682E3E7C64CF} = {C597CB18-7C62-4161-89E3-072F260018C6}
 		{0391B72E-7839-4597-92E9-9F653442752D} = {84879EEF-6B1B-49FC-8D31-E6C802939C00}
+		{9DD525FC-53E6-4B77-A59C-FB50DBDFFFED} = {5706F6F6-3E20-48F8-8C2B-B88606434664}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6D09F190-F348-4697-B273-7B4EB91008E5}
