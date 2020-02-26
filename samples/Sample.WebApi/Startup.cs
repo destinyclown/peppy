@@ -14,6 +14,9 @@ using Peppy;
 using Peppy.Autofac;
 using Peppy.Dependency;
 using Peppy.Extensions;
+using Peppy.Quartz;
+using Peppy.RabbitMQ;
+using Peppy.Redis;
 using Quartz;
 using Quartz.Impl;
 
@@ -60,7 +63,7 @@ namespace Sample.WebApi
                     });
             });
             services.AddRedis(Configuration);
-
+            services.AddQuartzJob();
             services.AddPeppyRabbitMQ(options =>
             {
                 options.HostName = "134.175.159.22";

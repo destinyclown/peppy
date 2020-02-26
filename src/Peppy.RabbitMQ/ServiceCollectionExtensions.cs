@@ -6,7 +6,7 @@ using Peppy.RabbitMQ;
 using Peppy.RabbitMQ.Manager;
 using System;
 
-namespace Peppy
+namespace Peppy.RabbitMQ
 {
     public static class ServiceCollectionExtensions
     {

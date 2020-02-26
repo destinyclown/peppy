@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\src\Peppy.Autofac\Peppy.Autofac.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Core\Peppy.Core.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Extensions\Peppy.Extensions.csproj" />
+    <ProjectReference Include="..\..\src\Peppy.Quartz\Peppy.Quartz.csproj" />
     <ProjectReference Include="..\..\src\Peppy.RabbitMQ\Peppy.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Redis\Peppy.Redis.csproj" />
     <ProjectReference Include="..\..\src\Peppy.SqlSugarCore\Peppy.SqlSugarCore.csproj" />

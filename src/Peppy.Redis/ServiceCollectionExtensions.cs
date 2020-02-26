@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Peppy.Redis;
 using Peppy.Redis.Manager;
 using System;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Peppy.Redis
 {
     /// <summary>
     /// Extensions method
