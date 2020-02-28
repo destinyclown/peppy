@@ -12,7 +12,7 @@ namespace Sample.WebApi.Jobs
     /// <summary>
     /// 创建IJob的实现类，并实现Excute方法。
     /// </summary>
-    [QuartzJob("job", "group", "0/5 * * * * ?")]
+    //[QuartzJob("job", "group", "0/5 * * * * ?")]
     public class MyJob : IJob
     {
         public async Task Execute(IJobExecutionContext context)

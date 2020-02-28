@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Peppy.Domain.Entities;
 using Peppy.SqlSugarCore.Entities;
 using SqlSugar;
@@ -6,7 +7,7 @@ using SqlSugar;
 namespace Sample.WebApi
 {
     [SugarTable("Persons")]
-    public class Person : SqlSugarEntity<int>
+    public class Person : SqlSugarEntity<int>, IRequest<Person>
     {
         public string Name { get; set; }
 
@@ -16,7 +17,7 @@ namespace Sample.WebApi
         }
     }
 
-    public class Student
+    public class Student : IRequest<string>
     {
         public int Id { get; set; }
         public string Name { get; set; }

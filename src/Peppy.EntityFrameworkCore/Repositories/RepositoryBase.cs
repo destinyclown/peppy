@@ -36,7 +36,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         ///
         /// </summary>
         /// <param name="dbContextProvider"></param>
-        public RepositoryBase(IDbContextProvider<TDbContext> dbContextProvider)
+        protected RepositoryBase(IDbContextProvider<TDbContext> dbContextProvider)
         {
             Context = dbContextProvider.GetDbContext();
         }
@@ -61,23 +61,18 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// <returns>IQueryable to be used to select entities from database</returns>
         protected virtual IQueryable<TEntity> QueryIncluding(params Expression<Func<TEntity, object>>[] propertySelectors)
         {
-            if (propertySelectors == null || propertySelectors.Count() <= 0)
+            if (propertySelectors == null || !propertySelectors.Any())
             {
                 return Query();
             }
 
             var query = Query();
 
-            foreach (var propertySelector in propertySelectors)
-            {
-                query = query.Include(propertySelector);
-            }
-
-            return query;
+            return propertySelectors.Aggregate(query, (current, propertySelector) => current.Include(propertySelector));
         }
 
         /// <summary>
-        /// Used to query a array of entities from datatable
+        /// Used to query a array of entities from data table
         /// </summary>
         /// <returns>Array of entities</returns>
         protected virtual async Task<TEntity[]> QueryArrayAsync()
@@ -86,7 +81,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         }
 
         /// <summary>
-        /// Used to query a array of entities from datatable by predicate
+        /// Used to query a array of entities from data table by predicate
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns>Array of entities</returns>
@@ -96,7 +91,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         }
 
         /// <summary>
-        /// Used to query a list of entities from datatable
+        /// Used to query a list of entities from data table
         /// </summary>
         /// <returns>List of entities</returns>
         protected virtual async Task<List<TEntity>> QueryListAsync()
@@ -105,7 +100,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         }
 
         /// <summary>
-        /// Used to query a list of entities from datatable by predicate
+        /// Used to query a list of entities from data table by predicate
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns>List of entities</returns>

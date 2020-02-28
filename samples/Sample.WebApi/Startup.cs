@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
@@ -19,6 +20,7 @@ using Peppy.RabbitMQ;
 using Peppy.Redis;
 using Quartz;
 using Quartz.Impl;
+using Sample.WebApi.Handlers;
 
 namespace Sample.WebApi
 {
@@ -71,6 +73,7 @@ namespace Sample.WebApi
                 options.Password = "bailun2019";
             });
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            services.AddMediatR(typeof(IEventHandler).Assembly);
             services.AddControllers();
         }
 

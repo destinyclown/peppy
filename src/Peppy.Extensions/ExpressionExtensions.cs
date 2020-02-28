@@ -37,8 +37,8 @@ namespace Peppy.Extensions
         /// Or
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="expr1"></param>
-        /// <param name="expr2"></param>
+        /// <param name="leftExpression"></param>
+        /// <param name="rightExpression"></param>
         /// <returns></returns>
         public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> leftExpression, Expression<Func<T, bool>> rightExpression) => leftExpression.Merge(rightExpression, Expression.Or);
 
@@ -46,8 +46,8 @@ namespace Peppy.Extensions
         /// Or
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="expr1"></param>
-        /// <param name="expr2"></param>
+        /// <param name="leftExpression"></param>
+        /// <param name="rightExpression"></param>
         /// <returns></returns>
         public static Expression<Func<T, bool>> OrElse<T>(this Expression<Func<T, bool>> leftExpression, Expression<Func<T, bool>> rightExpression) => leftExpression.Merge(rightExpression, Expression.OrElse);
 
