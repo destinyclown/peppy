@@ -1,60 +1,49 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
 using System;
-using Peppy.Core;
+using System.Linq;
+using Peppy.Swagger.Filters;
 
 namespace Peppy.Swagger
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddPeppySwagger(
-            this IServiceCollection services
+        public static IServiceCollection AddSwagger(
+            this IServiceCollection services, Action<SwaggerOptions> options, Action<SecurityOptions> action = null, Type codeEnumType = null
         ) => services
-            .AddSwaggerGen(options =>
+            .AddSwaggerGen(c =>
             {
-                var apiInfo = ApiInfo.Instance;
-
-                options.DescribeAllEnumsAsStrings();
-
-                options.SwaggerDoc(apiInfo.Version, new Info
+                if (options == null)
                 {
-                    Title = apiInfo.SwaggerInfo.Title,
-                    Version = apiInfo.SwaggerInfo.Version,
-                    Description = apiInfo.SwaggerInfo.Description
-                });
-
-                options.AddSecurityDefinition("Bearer", new ApiKeyScheme
-                {
-                    Description = "JWT Bearer 授权 \"Authorization:     Bearer+空格+token\"",
-                    Name = "Authorization",
-                    In = "header",
-                    Type = "apiKey"
-                });
-
-                foreach (var xmlFile in apiInfo.SwaggerInfo.XmlFiles)
-                {
-                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                    if (File.Exists(xmlPath))
-                    {
-                        options.IncludeXmlComments(xmlPath);
-                    }
+                    throw new ArgumentNullException(nameof(options));
                 }
-                options.DocumentFilter<LowerCaseDocumentFilter>();
-                options.OperationFilter<AuthorizeCheckOperationFilter>(apiInfo);
-            });
-
-        public static IApplicationBuilder UsePeppySwagger(
-            this IApplicationBuilder app,
-            IApiInfo apiInfo
-            ) => app.UseSwagger(c =>
-            {
-                c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
-            })
-            .UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint($"/doc/{apiInfo.SwaggerInfo.Title}/swagger.json", $"{apiInfo.SwaggerInfo.Title} {apiInfo.SwaggerInfo.Version}");
+                var swaggerOptions = new SwaggerOptions();
+                options(swaggerOptions);
+                services.Configure(options);
+                swaggerOptions.OpenApiInfos
+                    .ToList().
+                    ForEach(info =>
+                    {
+                        c.SwaggerDoc(info.Version, info);
+                    });
+                swaggerOptions.Files
+                    .ToList()
+                    .ForEach(xmlFile =>
+                    {
+                        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                        if (File.Exists(xmlPath))
+                        {
+                            c.IncludeXmlComments(xmlPath);
+                        }
+                    });
+                c.DocumentFilter<LowerCaseDocumentFilter>();
+                c.OperationFilter<StatusCodeOperationFilter>(codeEnumType);
+                if (action == null) return;
+                var securityOptions = new SecurityOptions();
+                action(securityOptions);
+                c.AddSecurityDefinition(securityOptions.Name, securityOptions.OpenApiSecurityScheme);
+                c.OperationFilter<AuthorizeCheckOperationFilter>(securityOptions);
             });
     }
 }

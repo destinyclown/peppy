@@ -7,7 +7,7 @@ using SqlSugar;
 namespace Sample.WebApi
 {
     [SugarTable("Persons")]
-    public class Person : SqlSugarEntity<int>, IRequest<Person>
+    public class Person : SqlSugarEntity<int>, INotification
     {
         public string Name { get; set; }
 

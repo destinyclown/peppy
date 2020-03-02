@@ -1,26 +1,27 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Peppy;
+using Microsoft.OpenApi.Models;
 using Peppy.Autofac;
 using Peppy.Dependency;
-using Peppy.Extensions;
 using Peppy.Quartz;
+using Peppy.Swagger;
 using Peppy.RabbitMQ;
 using Peppy.Redis;
 using Quartz;
 using Quartz.Impl;
 using Sample.WebApi.Handlers;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Sample.WebApi
 {
@@ -30,6 +31,27 @@ namespace Sample.WebApi
         {
             Configuration = configuration;
         }
+
+        private readonly Action<Peppy.Swagger.SwaggerOptions> _swaggerOptionsAction =
+            options =>
+            {
+                options.OpenApiInfos = new List<OpenApiInfo>
+                {
+                    new OpenApiInfo
+                    {
+                        Title = "test",
+                        Version = "v1",
+                        Description = "test"
+                    },
+                    new OpenApiInfo
+                    {
+                        Title = "test",
+                        Version = "v2",
+                        Description = "test"
+                    }
+                };
+                options.Files = new List<string> { "Sample.WebApi.xml" };
+            };
 
         public IConfiguration Configuration { get; }
 
@@ -74,6 +96,7 @@ namespace Sample.WebApi
             });
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
             services.AddMediatR(typeof(IEventHandler).Assembly);
+            services.AddSwagger(_swaggerOptionsAction, codeEnumType: typeof(StatusCodeEnum));
             services.AddControllers();
         }
 
@@ -90,6 +113,8 @@ namespace Sample.WebApi
             {
                 endpoints.MapControllers();
             });
+            app.UseStaticFiles()
+                .UseSwagger(_swaggerOptionsAction);
             var features = app.Properties["server.Features"] as FeatureCollection;
             var addresses = features.Get<IServerAddressesFeature>();
             var address = addresses.Addresses.First();

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -18,6 +20,9 @@ using Sample.WebApi.Jobs;
 
 namespace Sample.WebApi.Controllers
 {
+    /// <summary>
+    /// WeatherForecast
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
@@ -38,6 +43,15 @@ namespace Sample.WebApi.Controllers
         private readonly ClientRegister _clientRegister;
         private readonly IMediator _mediator;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="schedulerFactory"></param>
+        /// <param name="personPepository"></param>
+        /// <param name="clientRegister"></param>
+        /// <param name="rabbitMQManager"></param>
+        /// <param name="mediator"></param>
         public WeatherForecastController(
             ILogger<WeatherForecastController> logger,
             //ICapPublisher capPublisher,
@@ -58,9 +72,28 @@ namespace Sample.WebApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
-        public async Task<Person> Get()
+        private static Stopwatch TimerStart()
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Reset();
+            stopwatch.Start();
+            return stopwatch;
+        }
+
+        private static string TimerEnd(Stopwatch watch)
+        {
+            watch.Stop();
+            return ((double)watch.ElapsedMilliseconds).ToString(CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<string> Get()
+        {
+            var watch = TimerStart();
             //await _personPepository.BatchDeleteAsync(x => x.Id > 1);
             //await _personPepository.Query().Where(x => x.Name == "test").DeleteFromQueryAsync();
             //var persons = await _personPepository.QueryListAsync();
@@ -81,9 +114,14 @@ namespace Sample.WebApi.Controllers
             //    dbContext.SaveChanges();
             //    trans.Commit();
             //}
-            return await _mediator.Send(new Person() { Name = "小明" }, default);
+            await _mediator.Publish(new Person() { Name = "小明" }, default);
+            return TimerEnd(watch);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("CreateJob")]
         public async Task<string[]> CreateJob()
         {
@@ -104,6 +142,10 @@ namespace Sample.WebApi.Controllers
             return await Task.FromResult(new string[] { "value1", "value2" });
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("ShopJob")]
         public async Task<string[]> ShopJob()
         {
@@ -115,13 +157,13 @@ namespace Sample.WebApi.Controllers
 
         [NonAction]
         [RabbitMQReceive("test", "test")]
-        public void Test(TestModel msg)
+        private void Test(TestModel msg)
         {
             _logger.LogInformation(msg.ToJson());
         }
 
         //[CapSubscribe("sample.rabbitmq.mysql")]
-        public void Subscriber(DateTime p)
+        private void Subscriber(DateTime p)
         {
             Console.WriteLine($@"{DateTime.Now} Subscriber invoked, Info: {p}");
         }

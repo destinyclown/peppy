@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sample.WebApi</name>
+    </assembly>
+    <members>
+        <member name="T:Sample.WebApi.Controllers.WeatherForecastController">
+            <summary>
+            WeatherForecast
+            </summary>
+        </member>
+        <member name="M:Sample.WebApi.Controllers.WeatherForecastController.#ctor(Microsoft.Extensions.Logging.ILogger{Sample.WebApi.Controllers.WeatherForecastController},Quartz.ISchedulerFactory,Sample.WebApi.Repositories.IPersonPepository,Peppy.RabbitMQ.ClientRegister,Peppy.RabbitMQ.IRabbitMQManager,MediatR.IMediator)">
+             <summary>
+            
+             </summary>
+             <param name="logger"></param>
+             <param name="schedulerFactory"></param>
+             <param name="personPepository"></param>
+             <param name="clientRegister"></param>
+             <param name="rabbitMQManager"></param>
+             <param name="mediator"></param>
+        </member>
+        <member name="M:Sample.WebApi.Controllers.WeatherForecastController.Get">
+             <summary>
+            
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="M:Sample.WebApi.Controllers.WeatherForecastController.CreateJob">
+             <summary>
+            
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="M:Sample.WebApi.Controllers.WeatherForecastController.ShopJob">
+             <summary>
+            
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="T:Sample.WebApi.Jobs.MyJob">
+            <summary>
+            创建IJob的实现类，并实现Excute方法。
+            </summary>
+        </member>
+        <member name="F:Sample.WebApi.StatusCodeEnum.Unauthorized">
+            <summary>
+            未授权访问
+            </summary>
+        </member>
+        <member name="F:Sample.WebApi.StatusCodeEnum.Forbidden">
+             <summary>
+            
+             </summary>
+        </member>
+    </members>
+</doc>
