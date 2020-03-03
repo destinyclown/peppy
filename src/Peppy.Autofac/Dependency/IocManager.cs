@@ -36,13 +36,16 @@ namespace Peppy.Autofac.Dependency
                 case DependencyLifeStyle.Transient:
                     _services.AddTransient<TService>();
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(lifeStyle), lifeStyle, null);
             }
         }
 
         public void RegisterAssembly(Assembly assembly)
         {
             var length = AutofacOptionsManager.Assemblies?.Length ?? 0;
-            AutofacOptionsManager.Assemblies[length] = assembly;
+            if (AutofacOptionsManager.Assemblies != null) AutofacOptionsManager.Assemblies[length] = assembly;
         }
 
         void IIocRegistrar.Register<TService, TImplementation>()
@@ -65,6 +68,9 @@ namespace Peppy.Autofac.Dependency
                 case DependencyLifeStyle.Transient:
                     _services.AddTransient<TService, TImplementation>();
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(lifeStyle), lifeStyle, null);
             }
         }
     }

@@ -8,6 +8,6 @@ namespace Peppy.Mapper
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddMapper(this IServiceCollection services)
-            => services.AddSingleton<IMapper, Mapper>();
+            => services.AddSingleton<IMapper, MapperManager>();
     }
 }

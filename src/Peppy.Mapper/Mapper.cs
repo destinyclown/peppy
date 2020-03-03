@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Peppy.Mapper
 {
-    internal class Mapper : IMapper
+    internal class Mapper
     {
         public static readonly Mapper Instance = new Mapper();
 
@@ -26,7 +26,7 @@ namespace Peppy.Mapper
             {
                 var parameterExpression = Expression.Parameter(typeof(TSource), "x");
                 var sourcePropNames = typeof(TSource).GetProperties().Where(x => !x.IsDefined(typeof(NotMapAttribute), true)).Select(x => x.Name).ToArray();
-                var memberBindings = typeof(TTarget).GetProperties().Where(x => x.CanWrite && sourcePropNames.Contains(x.Name)).Select(x => Expression.Bind(typeof(TTarget).GetProperty(x.Name), Expression.Property(parameterExpression, typeof(TSource).GetProperty(x.Name))));
+                var memberBindings = typeof(TTarget).GetProperties().Where(x => x.CanWrite && sourcePropNames.Contains(x.Name)).Select(x => Expression.Bind(typeof(TTarget).GetProperty(x.Name) ?? throw new InvalidOperationException(), Expression.Property(parameterExpression, typeof(TSource).GetProperty(x.Name) ?? throw new InvalidOperationException())));
 
                 Func = Expression.Lambda<Func<TSource, TTarget>>(Expression.MemberInit(Expression.New(typeof(TTarget)), memberBindings), parameterExpression).Compile();
             }
