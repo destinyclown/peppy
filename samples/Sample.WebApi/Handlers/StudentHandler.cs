@@ -9,7 +9,7 @@ using Sample.WebApi.Repositories;
 
 namespace Sample.WebApi.Handlers
 {
-    public class StudentHandler : INotificationHandler<Person>, IEventHandler
+    public class StudentHandler : IRequestHandler<Student, string>, IEventHandler
     {
         private readonly IPersonPepository _personPepository;
 
@@ -22,11 +22,12 @@ namespace Sample.WebApi.Handlers
         {
         }
 
-        public async Task Handle(Person request, CancellationToken cancellationToken)
+        public async Task<string> Handle(Student request, CancellationToken cancellationToken)
         {
             //Console.WriteLine("Student handle start");
-            Console.WriteLine("2");
-            await Task.Delay(5000, cancellationToken);
+            //Console.WriteLine("2");
+            await Task.Delay(1000, cancellationToken);
+            return "test";
             //var result = await _personPepository.InsertAsync(request);
             //return new Person { Id = 2, Name = "test" };
         }

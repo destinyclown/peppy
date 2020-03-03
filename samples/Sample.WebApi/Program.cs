@@ -1,4 +1,3 @@
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -9,7 +8,7 @@ namespace Sample.WebApi
         public static void Main(string[] args)
         {
             CreateHostBuilder(args)
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                //.UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .Build().Run();
         }
 

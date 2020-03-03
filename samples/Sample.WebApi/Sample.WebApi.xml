@@ -9,7 +9,7 @@
             WeatherForecast
             </summary>
         </member>
-        <member name="M:Sample.WebApi.Controllers.WeatherForecastController.#ctor(Microsoft.Extensions.Logging.ILogger{Sample.WebApi.Controllers.WeatherForecastController},Quartz.ISchedulerFactory,Sample.WebApi.Repositories.IPersonPepository,Peppy.RabbitMQ.ClientRegister,Peppy.RabbitMQ.IRabbitMQManager,MediatR.IMediator)">
+        <member name="M:Sample.WebApi.Controllers.WeatherForecastController.#ctor(Microsoft.Extensions.Logging.ILogger{Sample.WebApi.Controllers.WeatherForecastController},Peppy.Mapper.IMapper,Quartz.ISchedulerFactory,Sample.WebApi.Repositories.IPersonPepository,Peppy.RabbitMQ.ClientRegister,Peppy.RabbitMQ.IRabbitMQManager,MediatR.IMediator)">
              <summary>
             
              </summary>

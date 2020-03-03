@@ -17,6 +17,7 @@ using Sample.WebApi.Repositories;
 using Peppy.Extensions;
 using Quartz;
 using Sample.WebApi.Jobs;
+using Peppy.Mapper;
 
 namespace Sample.WebApi.Controllers
 {
@@ -37,6 +38,7 @@ namespace Sample.WebApi.Controllers
 
         private readonly ISchedulerFactory _schedulerFactory;
         private IScheduler _scheduler;
+        private readonly IMapper _mapper;
         private readonly IPersonPepository _personPepository;
         private readonly IRedisManager _redisManager;
         private readonly IRabbitMQManager _rabbitMQManager;
@@ -56,6 +58,7 @@ namespace Sample.WebApi.Controllers
             ILogger<WeatherForecastController> logger,
             //ICapPublisher capPublisher,
             //IRedisManager redisManager,
+            IMapper mapper,
             ISchedulerFactory schedulerFactory,
             IPersonPepository personPepository,
             ClientRegister clientRegister,
@@ -70,6 +73,7 @@ namespace Sample.WebApi.Controllers
             _rabbitMQManager = rabbitMQManager;
             _personPepository = personPepository;
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         private static Stopwatch TimerStart()
@@ -91,7 +95,7 @@ namespace Sample.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<string> Get()
+        public async Task<PersonDto> Get()
         {
             var watch = TimerStart();
             //await _personPepository.BatchDeleteAsync(x => x.Id > 1);
@@ -114,8 +118,9 @@ namespace Sample.WebApi.Controllers
             //    dbContext.SaveChanges();
             //    trans.Commit();
             //}
-            await _mediator.Publish(new Person() { Name = "小明" }, default);
-            return TimerEnd(watch);
+            var person = await _mediator.Send(new Person() { Name = "小明" }, default);
+            Console.WriteLine(TimerEnd(watch));
+            return _mapper.Map<Person, PersonDto>(person);
         }
 
         /// <summary>

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using Autofac;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -12,7 +11,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Peppy.Autofac;
+using Peppy.AutoIoc;
 using Peppy.Dependency;
 using Peppy.Quartz;
 using Peppy.Swagger;
@@ -22,6 +21,7 @@ using Quartz;
 using Quartz.Impl;
 using Sample.WebApi.Handlers;
 using Swashbuckle.AspNetCore.Swagger;
+using Peppy.Mapper;
 
 namespace Sample.WebApi
 {
@@ -94,15 +94,14 @@ namespace Sample.WebApi
                 options.UserName = "bailun";
                 options.Password = "bailun2019";
             });
+            services.AddAutoIoc(typeof(IScopedDependency))
+                .AddAutoIoc(typeof(ISingletonDependency), LifeCycle.Singleton)
+                .AddAutoIoc(typeof(ITransientDependency), LifeCycle.Transient)
+                .AddMapper();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
             services.AddMediatR(typeof(IEventHandler).Assembly);
             services.AddSwagger(_swaggerOptionsAction, codeEnumType: typeof(StatusCodeEnum));
             services.AddControllers();
-        }
-
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            builder.RegisterModule(new PeppyModule(typeof(IDependency), new Assembly[] { Assembly.GetExecutingAssembly() }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

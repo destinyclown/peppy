@@ -8,7 +8,7 @@ using Sample.WebApi.Repositories;
 
 namespace Sample.WebApi.Handlers
 {
-    public class PersonHandler : INotificationHandler<Person>, IEventHandler
+    public class PersonHandler : IRequestHandler<Person, Person>, IEventHandler
     {
         private readonly IPersonPepository _personPepository;
 
@@ -21,12 +21,12 @@ namespace Sample.WebApi.Handlers
         {
         }
 
-        public async Task Handle(Person request, CancellationToken cancellationToken)
+        public async Task<Person> Handle(Person request, CancellationToken cancellationToken)
         {
-            Console.WriteLine("1");
-            await Task.Delay(5000, cancellationToken);
-            //var result = await _personPepository.InsertAsync(request);
-            //return new Person { Id = 1, Name = "test" };
+            //Console.WriteLine("1");
+            //await Task.Delay(5000, cancellationToken);
+            var result = await _personPepository.InsertAsync(request);
+            return new Person { Id = 1, Name = "test" };
         }
     }
 }
