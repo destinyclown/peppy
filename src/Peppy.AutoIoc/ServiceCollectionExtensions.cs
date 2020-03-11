@@ -43,9 +43,12 @@ namespace Peppy.AutoIoc
                             services.AddTransient(interfaceType, implementType);
                             break;
 
-                        default:
+                        case LifeCycle.Scoped:
                             services.AddScoped(interfaceType, implementType);
                             break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(lifeCycle), lifeCycle, null);
                     }
             }
             return services;
