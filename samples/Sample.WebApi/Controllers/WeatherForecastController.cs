@@ -118,8 +118,8 @@ namespace Sample.WebApi.Controllers
             //    dbContext.SaveChanges();
             //    trans.Commit();
             //}
-            //var person = await _mediator.Send(new Person() { Name = "小明" }, default);
-            var person = new Person() { Name = "小明" };
+            var person = await _mediator.Send(new Person() { Name = "小明" }, default);
+            //var person = new Person() { Name = "小明" };
             Console.WriteLine(TimerEnd(watch));
             return _mapper.Map<Person, PersonDto>(person);
         }

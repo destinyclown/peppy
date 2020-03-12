@@ -16,7 +16,7 @@ namespace Peppy.Mapper
 
         public TTarget Map<TSource, TTarget>(TSource source) => CacheModel<TSource, TTarget>.Invoke(source);
 
-        public List<TTarget> Map<TSource, TTarget>(List<TSource> sources) => sources.Select(CacheModel<TSource, TTarget>.Invoke).ToList();
+        public List<TTarget> Map<TSource, TTarget>(List<TSource> sources) => sources.AsParallel().Select(CacheModel<TSource, TTarget>.Invoke).ToList();
 
         internal class CacheModel<TSource, TTarget>
         {
@@ -25,22 +25,18 @@ namespace Peppy.Mapper
             static CacheModel()
             {
                 var parameterExpression = Expression.Parameter(typeof(TSource), "x");
-                var sourcePropNames = typeof(TSource).GetProperties().Where(x => !x.IsDefined(typeof(NotMapAttribute), true)).Select(x => x.Name).ToArray();
-                var memberBindings = typeof(TTarget).GetProperties().Where(x => x.CanWrite && sourcePropNames.Contains(x.Name)).Select(x => Expression.Bind(typeof(TTarget).GetProperty(x.Name) ?? throw new InvalidOperationException(), Expression.Property(parameterExpression, typeof(TSource).GetProperty(x.Name) ?? throw new InvalidOperationException())));
+                var sourcePropNames = typeof(TSource).GetProperties()
+                    .Where(x => !x.IsDefined(typeof(NotMapAttribute), true))
+                    .Select(x => x.Name)
+                    .ToArray();
+                var memberBindings = typeof(TTarget).GetProperties()
+                    .Where(x => x.CanWrite && sourcePropNames.Contains(x.Name))
+                    .Select(x => Expression.Bind(typeof(TTarget).GetProperty(x.Name), Expression.Property(parameterExpression, typeof(TSource).GetProperty(x.Name))));
 
                 Func = Expression.Lambda<Func<TSource, TTarget>>(Expression.MemberInit(Expression.New(typeof(TTarget)), memberBindings), parameterExpression).Compile();
             }
 
             public static TTarget Invoke(TSource source) => Func(source);
         }
-
-        //public TTarget Map<TSource, TTarget>(TSource source)
-        //{
-        //    var parameterExpression = Expression.Parameter(typeof(TSource), "x");
-        //    var sourcePropNames = typeof(TSource).GetProperties().Where(x => !x.IsDefined(typeof(NotMapAttribute), true)).Select(x => x.Name).ToArray();
-        //    var memberBindings = typeof(TTarget).GetProperties().Where(x => x.CanWrite && sourcePropNames.Contains(x.Name)).Select(x => Expression.Bind(typeof(TTarget).GetProperty(x.Name), Expression.Property(parameterExpression, typeof(TSource).GetProperty(x.Name))));
-        //    var Func = Expression.Lambda<Func<TSource, TTarget>>(Expression.MemberInit(Expression.New(typeof(TTarget)), memberBindings), parameterExpression).Compile();
-        //    return Func(source);
-        //}
     }
 }

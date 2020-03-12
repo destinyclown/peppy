@@ -18,8 +18,13 @@ namespace Peppy.UnitTest
             var peoples = InitPeoples().ToList();
 
             var watch = Stopwatch.StartNew();
-            watch.Restart();
 
+            watch.Restart();
+            var mapperConfig = peoples.Take(2).ToList().Map<People, PeopleDto>();
+            Assert.IsTrue(mapperConfig.Count > 0);
+            var t0 = watch.ElapsedMilliseconds;
+
+            watch.Restart();
             var result = peoples.Map<People, PeopleDto>();
             var t1 = watch.ElapsedMilliseconds;
 
@@ -36,10 +41,11 @@ namespace Peppy.UnitTest
             var autoMapperResult2 = peoples.Select(x => mapper.Map<PeopleDto>(x)).ToList();
             var t4 = watch.ElapsedMilliseconds;
 
-            Console.WriteLine("MapperResult:" + t1);
-            Console.WriteLine("AutoMapperConfig:" + t2);
-            Console.WriteLine("AutoMapperResult:" + t3);
-            Console.WriteLine("AutoMapperResult2:" + t4);
+            Console.WriteLine("MapperConfig: " + t0);
+            Console.WriteLine("MapperResult: " + t1);
+            Console.WriteLine("AutoMapperConfig: " + t2);
+            Console.WriteLine("AutoMapperResult: " + t3);
+            Console.WriteLine("AutoMapperResult2: " + t4);
         }
 
         private static IEnumerable<People> InitPeoples()

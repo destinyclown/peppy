@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Peppy.Domain.Entities;
-using Peppy.SqlSugarCore.Entities;
-using SqlSugar;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Sample.WebApi
 {
-    [SugarTable("Persons")]
-    public class Person : SqlSugarEntity<int>, IRequest<Person>
+    //[SugarTable("Persons")]
+    [Table("Persons")]
+    public class Person : Entity<int>, IRequest<Person>
     {
         public string Name { get; set; }
 
@@ -59,7 +59,7 @@ namespace Sample.WebApi
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql(ConnectionString);
+            //optionsBuilder.UseMySql(ConnectionString);
         }
     }
 }

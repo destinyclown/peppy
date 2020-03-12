@@ -25,8 +25,11 @@ namespace Sample.WebApi.Handlers
         {
             //Console.WriteLine("1");
             //await Task.Delay(5000, cancellationToken);
-            var result = await _personPepository.InsertAsync(request);
-            return new Person { Id = 1, Name = "test" };
+            var persons = await _personPepository.QueryListAsync();
+            var person = persons.FirstOrDefault();
+            person.Name = "test";
+            var result = await _personPepository.UpdateAsync(person);
+            return person;
         }
     }
 }

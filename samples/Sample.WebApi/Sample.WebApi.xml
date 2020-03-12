@@ -43,6 +43,12 @@
             创建IJob的实现类，并实现Excute方法。
             </summary>
         </member>
+        <member name="M:Sample.WebApi.Jobs.MyJob.ExecuteAsync">
+            <summary>
+            主逻辑
+            </summary>
+            <returns></returns>
+        </member>
         <member name="F:Sample.WebApi.StatusCodeEnum.Unauthorized">
             <summary>
             未授权访问

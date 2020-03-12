@@ -1,4 +1,4 @@
-﻿using Peppy.SqlSugarCore.Repositories;
+﻿using Peppy.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
