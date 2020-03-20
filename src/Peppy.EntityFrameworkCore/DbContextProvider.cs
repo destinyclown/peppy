@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Peppy.EntityFrameworkCore
 {
-    internal sealed class DbContextProvider<TDbContext> : IDbContextProvider<TDbContext>
+    public class DbContextProvider<TDbContext> : IDbContextProvider<TDbContext>
         where TDbContext : DbContext
     {
         private readonly TDbContext _dbContext;

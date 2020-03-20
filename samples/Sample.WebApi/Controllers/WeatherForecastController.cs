@@ -33,7 +33,7 @@ namespace Sample.WebApi.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        //private readonly ICapPublisher _capBus;
+        //private readonly ICappublicer _capBus;
         private readonly ILogger<WeatherForecastController> _logger;
 
         private readonly ISchedulerFactory _schedulerFactory;
@@ -56,7 +56,7 @@ namespace Sample.WebApi.Controllers
         /// <param name="mediator"></param>
         public WeatherForecastController(
             ILogger<WeatherForecastController> logger,
-            //ICapPublisher capPublisher,
+            //ICappublicer cappublicer,
             //IRedisManager redisManager,
             IMapper mapper,
             ISchedulerFactory schedulerFactory,
@@ -66,7 +66,7 @@ namespace Sample.WebApi.Controllers
             IMediator mediator)
         {
             _logger = logger;
-            //_capBus = capPublisher;
+            //_capBus = cappublicer;
             //_redisManager = redisManager;
             _schedulerFactory = schedulerFactory;
             _clientRegister = clientRegister;
@@ -113,7 +113,7 @@ namespace Sample.WebApi.Controllers
             //{
             //    dbContext.Persons.Add(new Person() { Name = DateTime.Now.ToString() });
 
-            //    _capBus.Publish("sample.rabbitmq.qq", DateTime.Now);
+            //    _capBus.public("sample.rabbitmq.qq", DateTime.Now);
 
             //    dbContext.SaveChanges();
             //    trans.Commit();

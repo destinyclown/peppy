@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Peppy.EventBus
 {
-    public interface IEventPublisher<TEvent> where TEvent : IEvent
+    public interface IEventpublicer<TEvent> where TEvent : IEvent
     {
         /// <summary>
         /// 发布事件
@@ -15,6 +15,6 @@ namespace Peppy.EventBus
         /// <param name="event"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task PublishAsync(TEvent @event, CancellationToken cancellationToken = default);
+        Task publicAsync(TEvent @event, CancellationToken cancellationToken = default);
     }
 }

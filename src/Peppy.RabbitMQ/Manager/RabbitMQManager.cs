@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Peppy.RabbitMQ.Manager
 {
-    internal sealed class RabbitMQManager : IRabbitMQManager
+    public class RabbitMQManager : IRabbitMQManager
     {
         private readonly ILogger<RabbitMQManager> _logger;
         private readonly IOptions<PeppyRabbitMQOptions> _rabbitMQOptions;

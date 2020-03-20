@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Peppy.SqlSugarCore
 {
-    internal sealed class DbContextProvider : IDbContextProvider
+    public class DbContextProvider : IDbContextProvider
     {
         private readonly IOptions<SqlSugarCoreOptions> _options;
 

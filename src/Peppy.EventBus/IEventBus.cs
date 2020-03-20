@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Peppy.EventBus
 {
-    public interface IEventBus<TEvent> : IEventSubscriber, IEventPublisher<TEvent> where TEvent : IEvent
+    public interface IEventBus<TEvent> : IEventSubscriber, IEventpublicer<TEvent> where TEvent : IEvent
     {
     }
 }

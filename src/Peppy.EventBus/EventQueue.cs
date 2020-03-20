@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Peppy.EventBus
 {
-    internal sealed class EventQueue
+    public class EventQueue
     {
         public event EventHandler<EventProcessedEventArgs> EventPushed;
 

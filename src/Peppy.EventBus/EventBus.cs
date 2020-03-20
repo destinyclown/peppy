@@ -30,7 +30,7 @@ namespace Peppy.EventBus
              select eh).ToList().ForEach(async eh => await eh.HandleAsync((TEvent)e.Event));
         }
 
-        public Task PublishAsync(TEvent @event, CancellationToken cancellationToken = default)
+        public Task publicAsync(TEvent @event, CancellationToken cancellationToken = default)
         => Task.Factory.StartNew(() => eventQueue.Push(@event));
 
         /// <summary>

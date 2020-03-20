@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Peppy.Swagger.Filters
 {
-    internal sealed class LowerCaseDocumentFilter : IDocumentFilter
+    public class LowerCaseDocumentFilter : IDocumentFilter
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {

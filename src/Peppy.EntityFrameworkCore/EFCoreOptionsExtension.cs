@@ -6,7 +6,7 @@ using System;
 
 namespace Peppy.EntityFrameworkCore
 {
-    internal sealed class EFCoreOptionsExtension<TContext> : IPeppyOptionsExtension
+    public class EFCoreOptionsExtension<TContext> : IPeppyOptionsExtension
         where TContext : DbContext
     {
         private readonly Action<EFCoreOptions> _configure;

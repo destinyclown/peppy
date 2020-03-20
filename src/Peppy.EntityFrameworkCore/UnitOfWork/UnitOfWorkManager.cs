@@ -6,7 +6,7 @@ using System.Transactions;
 
 namespace Peppy.EntityFrameworkCore.UnitOfWork
 {
-    internal sealed class UnitOfWorkManager<TDbContext> : IUnitOfWorkManager
+    public class UnitOfWorkManager<TDbContext> : IUnitOfWorkManager
         where TDbContext : DbContext
     {
         private readonly TDbContext _dbContext;

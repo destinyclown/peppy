@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Peppy.Autofac.Dependency
 {
-    internal sealed class IocManager : IIocManager
+    public class IocManager : IIocManager
     {
         private readonly IServiceCollection _services;
 
