@@ -7,7 +7,7 @@ using System.Transactions;
 namespace Peppy.EntityFrameworkCore.UnitOfWork
 {
     public class UnitOfWorkManager<TDbContext> : IUnitOfWorkManager
-        where TDbContext : DbContext
+        where TDbContext : EFCroeDbContext
     {
         private readonly TDbContext _dbContext;
 

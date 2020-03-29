@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Peppy.Domain.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
+using Peppy.EntityFrameworkCore;
 
 namespace Sample.WebApi
 {
@@ -51,7 +52,7 @@ namespace Sample.WebApi
         }
     }
 
-    public class AppDbContext : DbContext
+    public class AppDbContext : EFCroeDbContext
     {
         public const string ConnectionString = "Server=192.168.6.45;Database=captest;UserId=root;Password=#7kfnymAM$Y9-Ntf;port=3306;Convert Zero Datetime=True;allowPublicKeyRetrieval=true";
 

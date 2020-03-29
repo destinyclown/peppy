@@ -7,7 +7,7 @@ namespace Peppy.EntityFrameworkCore
     ///
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
-    public interface IDbContextProvider<out TDbContext> : IScopedDependency
+    public interface IDbContextProvider<out TDbContext> : ITransientDependency
         where TDbContext : DbContext
     {
         /// <summary>

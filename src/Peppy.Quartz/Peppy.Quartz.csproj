@@ -1,7 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/starmile0/peppy</RepositoryUrl>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageIconUrl />
+    <PackageProjectUrl>https://github.com/starmile0/peppy</PackageProjectUrl>
+    <PackageTags>Peppy, Quartz</PackageTags>
+    <Description>DotNet Core Quartz manage</Description>
+    <Version>1.0.0</Version>
+    <SignAssembly>false</SignAssembly>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Product>Peppy</Product>
+    <Company>starmile;peppy</Company>
+    <Authors>starmile</Authors>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,5 +26,12 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.1" />
     <PackageReference Include="Quartz" Version="3.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\doc\logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

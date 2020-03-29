@@ -18,7 +18,6 @@ namespace Peppy.RabbitMQ.Manager
     public class RabbitMQManager : IRabbitMQManager
     {
         private readonly ILogger<RabbitMQManager> _logger;
-        private readonly IOptions<PeppyRabbitMQOptions> _rabbitMQOptions;
         private readonly ConnectionFactory _connectionFactory;
         private static IConnection _connection;
         private static string _connStr;
@@ -28,23 +27,17 @@ namespace Peppy.RabbitMQ.Manager
 
         public RabbitMQManager(
             ILogger<RabbitMQManager> logger,
-            IOptions<PeppyRabbitMQOptions> rabbitMQOptions)
+            IOptions<PeppyRabbitMQOptions> rabbitMqOptions)
         {
             _logger = logger;
-            _rabbitMQOptions = rabbitMQOptions;
             _connectionFactory = new ConnectionFactory
             {
-                HostName = _rabbitMQOptions.Value.HostName,
-                Port = _rabbitMQOptions.Value.Port,
-                UserName = _rabbitMQOptions.Value.UserName,
-                Password = _rabbitMQOptions.Value.Password
+                HostName = rabbitMqOptions.Value.HostName,
+                Port = rabbitMqOptions.Value.Port,
+                UserName = rabbitMqOptions.Value.UserName,
+                Password = rabbitMqOptions.Value.Password
             };
-            _connStr = string.Format("{0}:{1},userName={2},password={3}",
-                _rabbitMQOptions.Value.HostName,
-                _rabbitMQOptions.Value.Port,
-                _rabbitMQOptions.Value.UserName,
-                _rabbitMQOptions.Value.Password
-            );
+            _connStr = $"{rabbitMqOptions.Value.HostName}:{rabbitMqOptions.Value.Port},userName={rabbitMqOptions.Value.UserName},password={rabbitMqOptions.Value.Password}";
         }
 
         public void Listening(string exchangeName, string queueName)

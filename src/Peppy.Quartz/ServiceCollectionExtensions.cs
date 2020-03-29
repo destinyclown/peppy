@@ -4,6 +4,8 @@ using Quartz;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Peppy.Quartz.Manager;
+using Quartz.Impl;
 
 namespace Peppy.Quartz
 {
@@ -16,21 +18,11 @@ namespace Peppy.Quartz
         /// 初始化任务
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="job"></param>
         /// <returns></returns>
         public static IServiceCollection AddQuartzJob(this IServiceCollection services)
+
         {
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IJob))))
-                .ToArray();
-            foreach (var type in types)
-            {
-                foreach (QuartzJobAttribute quartzJob in type.GetCustomAttributes(typeof(QuartzJobAttribute), true))
-                {
-                    services.AddTransient(type);
-                }
-            }
-            services.AddSingleton<QuartzStartup>();
+            services.AddSingleton<IQuartzJobManager, QuartzJobManager>();
             return services;
         }
     }

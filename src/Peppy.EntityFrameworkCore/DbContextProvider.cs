@@ -6,7 +6,7 @@ using System.Text;
 namespace Peppy.EntityFrameworkCore
 {
     public class DbContextProvider<TDbContext> : IDbContextProvider<TDbContext>
-        where TDbContext : DbContext
+        where TDbContext : EFCroeDbContext
     {
         private readonly TDbContext _dbContext;
 

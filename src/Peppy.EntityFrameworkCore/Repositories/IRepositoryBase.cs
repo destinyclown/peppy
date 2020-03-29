@@ -15,7 +15,7 @@ namespace Peppy.EntityFrameworkCore
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TPrimaryKey"></typeparam>
-    public interface IRepositoryBase<TEntity, TPrimaryKey> : IRepository<TEntity, TPrimaryKey>, IScopedDependency
+    public interface IRepositoryBase<TEntity, TPrimaryKey> : IRepository<TEntity, TPrimaryKey>, ITransientDependency
         where TEntity : class, IEntity<TPrimaryKey>
     {
     }

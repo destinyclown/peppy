@@ -7,7 +7,7 @@ using System;
 namespace Peppy.EntityFrameworkCore
 {
     public class EFCoreOptionsExtension<TContext> : IPeppyOptionsExtension
-        where TContext : DbContext
+        where TContext : EFCroeDbContext
     {
         private readonly Action<EFCoreOptions> _configure;
 

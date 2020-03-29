@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Peppy.EntityFrameworkCore.UnitOfWork
 {
     public class UnitOfWorkCompleteHandle<TDbContext> : IUnitOfWorkCompleteHandle
-        where TDbContext : DbContext
+        where TDbContext : EFCroeDbContext
     {
         private readonly TDbContext _dbContext;
 

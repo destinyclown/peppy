@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="connectionString"></param>
         /// <returns></returns>
         public static PeppyOptions UseEntityFrameworkCore<TContext>(this PeppyOptions options, string connectionString)
-            where TContext : DbContext
+            where TContext : EFCroeDbContext
         {
             return options.UseEntityFrameworkCore<TContext>(opt => { opt.ConnectionString = connectionString; });
         }
@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="options"></param>
         /// <returns></returns>
         public static PeppyOptions UseEntityFrameworkCore<TContext>(this PeppyOptions options)
-            where TContext : DbContext
+            where TContext : EFCroeDbContext
         {
             return options.UseEntityFrameworkCore<TContext>(opt => { });
         }
@@ -41,7 +41,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configure"></param>
         /// <returns></returns>
         public static PeppyOptions UseEntityFrameworkCore<TContext>(this PeppyOptions options, Action<EFCoreOptions> configure)
-            where TContext : DbContext
+            where TContext : EFCroeDbContext
         {
             if (options == null)
             {

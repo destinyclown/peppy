@@ -18,8 +18,8 @@ namespace Peppy.EntityFrameworkCore.Repositories
     /// <typeparam name="TDbContext"></typeparam>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TPrimaryKey"></typeparam>
-    public abstract class RepositoryBase<TDbContext, TEntity, TPrimaryKey> : IScopedDependency
-            where TDbContext : DbContext
+    public abstract class RepositoryBase<TDbContext, TEntity, TPrimaryKey> : ITransientDependency
+            where TDbContext : EFCroeDbContext
             where TEntity : class, IEntity<TPrimaryKey>
     {
         /// <summary>
@@ -146,10 +146,17 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// Insert a new entity
         /// </summary>
         /// <param name="entity"></param>
+        /// <param name="submit"></param>
         /// <returns>Inserted entity</returns>
-        public virtual async Task<TEntity> InsertAsync(TEntity entity)
+        public virtual async Task<TEntity> InsertAsync(TEntity entity, bool submit = true)
         {
             var result = await Table.AddAsync(entity);
+
+            if (entity.IsTransient())
+            {
+                await Context.SaveChangesAsync();
+            }
+
             return result?.Entity;
         }
 
@@ -178,11 +185,16 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// Updates an existing entity
         /// </summary>
         /// <param name="entity"></param>
+        /// <param name="submit"></param>
         /// <returns></returns>
-        public virtual async Task<TEntity> UpdateAsync(TEntity entity)
+        public virtual async Task<TEntity> UpdateAsync(TEntity entity, bool submit = true)
         {
             AttachIfNot(entity);
             Context.Entry(entity).State = EntityState.Modified;
+            if (submit)
+            {
+                await Context.SaveChangesAsync();
+            }
             return await Task.FromResult(entity);
         }
 
@@ -191,11 +203,16 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="id">Id of the entity</param>
         /// <param name="updateAction">Action that can be used to change values of the entity</param>
+        /// <param name="submit"></param>
         /// <returns>Updated entity</returns>
-        public virtual async Task<TEntity> UpdateAsync(TPrimaryKey id, Func<TEntity, Task> updateAction)
+        public virtual async Task<TEntity> UpdateAsync(TPrimaryKey id, Func<TEntity, Task> updateAction, bool submit = true)
         {
             var entity = await FirstOrDefaultAsync(id);
             await updateAction(entity);
+            if (submit)
+            {
+                await Context.SaveChangesAsync();
+            }
             return entity;
         }
 
@@ -207,18 +224,24 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// Deletes an entity
         /// </summary>
         /// <param name="entity">Entity</param>
+        /// <param name="submit"></param>
         /// <returns>Entity to be deleted</returns>
-        public virtual async Task DeleteAsync(TEntity entity)
+        public virtual async Task DeleteAsync(TEntity entity, bool submit = true)
         {
             await Task.FromResult(Table.Remove(entity));
+            if (submit)
+            {
+                await Context.SaveChangesAsync();
+            }
         }
 
         /// <summary>
         /// Deletes an entity by it's primary key id
         /// </summary>
         /// <param name="id">Primary key</param>
+        /// <param name="submit"></param>
         /// <returns>Primary key of the entity</returns>
-        public virtual async Task DeleteAsync(TPrimaryKey id)
+        public virtual async Task DeleteAsync(TPrimaryKey id, bool submit = true)
         {
             var entity = Table.Local.FirstOrDefault(ent => EqualityComparer<TPrimaryKey>.Default.Equals(ent.Id, id));
             if (entity == null)
@@ -230,7 +253,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
                 }
             }
 
-            await DeleteAsync(entity);
+            await DeleteAsync(entity, submit);
         }
 
         #endregion Delete

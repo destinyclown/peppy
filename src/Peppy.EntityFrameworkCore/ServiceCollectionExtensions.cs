@@ -5,6 +5,7 @@ using Peppy.EntityFrameworkCore.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -21,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="connectionString"></param>
         /// <returns></returns>
         public static IServiceCollection AddEntityFrameworkCore<TContext>(this IServiceCollection services, string connectionString)
-            where TContext : DbContext
+            where TContext : EFCroeDbContext
         {
             services.AddEntityFrameworkCore<TContext>(otp => { otp.ConnectionString = connectionString; });
             return services;
@@ -35,16 +36,22 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="options"></param>
         /// <returns></returns>
         public static IServiceCollection AddEntityFrameworkCore<TContext>(this IServiceCollection services, Action<EFCoreOptions> options)
-            where TContext : DbContext
+            where TContext : EFCroeDbContext
         {
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
-            services.AddDbContext<TContext>();
-            services.Configure(options);
+            services.AddDbContext<TContext>(optionsAction =>
+            {
+                //使用ef core mysql 连接
+                var loggerFactory = new LoggerFactory();
+                loggerFactory.AddProvider(new EFLoggerProvider());
+                optionsAction.UseLoggerFactory(loggerFactory);
+            });
             services.AddScoped<IUnitOfWorkManager, UnitOfWorkManager<TContext>>();
             services.AddScoped<IUnitOfWorkCompleteHandle, UnitOfWorkCompleteHandle<TContext>>();
+            services.AddScoped<IDbContextProvider<TContext>, DbContextProvider<TContext>>();
             return services;
         }
     }
