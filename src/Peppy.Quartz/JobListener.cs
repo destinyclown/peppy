@@ -7,7 +7,7 @@ using Quartz;
 
 namespace Peppy.Quartz
 {
-    -public class JobListener : IJobListener
+    public class JobListener : IJobListener
     {
         public string Name { get; } = nameof(JobListener);
 
