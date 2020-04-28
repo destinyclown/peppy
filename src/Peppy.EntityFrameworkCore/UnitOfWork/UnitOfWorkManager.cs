@@ -36,5 +36,10 @@ namespace Peppy.EntityFrameworkCore.UnitOfWork
             var handle = new UnitOfWorkCompleteHandle<TDbContext>(_dbContext);
             return handle;
         }
+
+        public void Dispose()
+        {
+            _dbContext.Database.CommitTransaction();
+        }
     }
 }

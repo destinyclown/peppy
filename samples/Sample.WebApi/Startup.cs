@@ -87,10 +87,7 @@ namespace Sample.WebApi
                 //        sugar.ConnectionString = Configuration.GetConnectionString("Default");
                 //    });
             });
-            services.AddPeppy(options =>
-            {
-                options.UseEntityFrameworkCore<AppDbContext>();
-            });
+            services.AddEntityFrameworkCore<AppDbContext>(Configuration.GetConnectionString("Default"));
             services.AddRedis(Configuration);
             services.AddQuartzJob();
             services.AddPeppyRabbitMQ(options =>
@@ -103,7 +100,6 @@ namespace Sample.WebApi
                 .AddAutoIoc(typeof(ISingletonDependency), LifeCycle.Singleton)
                 .AddAutoIoc(typeof(ITransientDependency), LifeCycle.Transient)
                 .AddMapper();
-            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
             services.AddMediatR(typeof(IEventHandler).Assembly);
             services.AddSwagger(_swaggerOptionsAction, codeEnumType: typeof(StatusCodeEnum));
             services.AddControllers();
@@ -119,7 +115,7 @@ namespace Sample.WebApi
             });
             app.UseStaticFiles()
                 .UseSwagger(_swaggerOptionsAction)
-                .UseQuartzJob();
+                .UseQuartzAutostartJob<MyJob>();
             var features = app.Properties["server.Features"] as FeatureCollection;
             var addresses = features.Get<IServerAddressesFeature>();
             var address = addresses.Addresses.First();

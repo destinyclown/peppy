@@ -20,8 +20,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TContext"></typeparam>
         /// <param name="services"></param>
         /// <param name="connectionString"></param>
+        /// <param name="isUseLogger"></param>
         /// <returns></returns>
-        public static IServiceCollection AddEntityFrameworkCore<TContext>(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddEntityFrameworkCore<TContext>(this IServiceCollection services, string connectionString, bool isUseLogger = true)
             where TContext : EFCroeDbContext
         {
             services.AddEntityFrameworkCore<TContext>(otp => { otp.ConnectionString = connectionString; });
@@ -34,8 +35,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TContext"></typeparam>
         /// <param name="services"></param>
         /// <param name="options"></param>
+        /// <param name="isUseLogger"></param>
         /// <returns></returns>
-        public static IServiceCollection AddEntityFrameworkCore<TContext>(this IServiceCollection services, Action<EFCoreOptions> options)
+        public static IServiceCollection AddEntityFrameworkCore<TContext>(this IServiceCollection services, Action<EFCoreOptions> options, bool isUseLogger = true)
             where TContext : EFCroeDbContext
         {
             if (options == null)
@@ -45,13 +47,14 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddDbContext<TContext>(optionsAction =>
             {
                 //使用ef core mysql 连接
+                if (!isUseLogger) return;
                 var loggerFactory = new LoggerFactory();
                 loggerFactory.AddProvider(new EFLoggerProvider());
                 optionsAction.UseLoggerFactory(loggerFactory);
             });
-            services.AddScoped<IUnitOfWorkManager, UnitOfWorkManager<TContext>>();
-            services.AddScoped<IUnitOfWorkCompleteHandle, UnitOfWorkCompleteHandle<TContext>>();
-            services.AddScoped<IDbContextProvider<TContext>, DbContextProvider<TContext>>();
+            services.AddTransient<IUnitOfWorkManager, UnitOfWorkManager<TContext>>();
+            services.AddTransient<IUnitOfWorkCompleteHandle, UnitOfWorkCompleteHandle<TContext>>();
+            services.AddTransient<IDbContextProvider<TContext>, DbContextProvider<TContext>>();
             return services;
         }
     }

@@ -54,11 +54,15 @@ namespace Sample.WebApi
 
     public class AppDbContext : EFCroeDbContext
     {
-        public const string ConnectionString = "Server=192.168.6.45;Database=captest;UserId=root;Password=#7kfnymAM$Y9-Ntf;port=3306;Convert Zero Datetime=True;allowPublicKeyRetrieval=true";
+        //public const string ConnectionString = "Server=192.168.6.45;Database=captest;UserId=root;Password=#7kfnymAM$Y9-Ntf;port=3306;Convert Zero Datetime=True;allowPublicKeyRetrieval=true";
 
         public DbSet<Person> Persons { get; set; }
 
+        public AppDbContext(DbContextOptions options) : base(options)
+        {
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        
         {
             //optionsBuilder.UseMySql(ConnectionString);
         }

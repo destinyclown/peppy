@@ -9,7 +9,7 @@ namespace Peppy.Domain.UnitOfWork
     /// <summary>
     /// Unit of work manager. Used to begin and control a unit of work.
     /// </summary>
-    public interface IUnitOfWorkManager
+    public interface IUnitOfWorkManager : IDisposable
     {
         /// <summary>
         /// Begins a new unit of work.
