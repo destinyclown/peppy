@@ -13,16 +13,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Peppy.AutoIoc;
 using Peppy.Dependency;
-using Peppy.Quartz;
 using Peppy.Swagger;
 using Peppy.RabbitMQ;
 using Peppy.Redis;
-using Quartz;
-using Quartz.Impl;
 using Sample.WebApi.Handlers;
 using Swashbuckle.AspNetCore.Swagger;
 using Peppy.Mapper;
-using Sample.WebApi.Jobs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Sample.WebApi
 {
@@ -87,9 +84,13 @@ namespace Sample.WebApi
                 //        sugar.ConnectionString = Configuration.GetConnectionString("Default");
                 //    });
             });
-            services.AddEntityFrameworkCore<AppDbContext>(Configuration.GetConnectionString("Default"));
+            
+            services.AddEntityFrameworkCore<AppDbContext>(options =>
+            {
+                options.UseMySql(Configuration.GetConnectionString("Default"));
+
+            });
             services.AddRedis(Configuration);
-            services.AddQuartzJob();
             services.AddPeppyRabbitMQ(options =>
             {
                 options.HostName = "134.175.159.22";
@@ -114,8 +115,7 @@ namespace Sample.WebApi
                 endpoints.MapControllers();
             });
             app.UseStaticFiles()
-                .UseSwagger(_swaggerOptionsAction)
-                .UseQuartzAutostartJob<MyJob>();
+                .UseSwagger(_swaggerOptionsAction);
             var features = app.Properties["server.Features"] as FeatureCollection;
             var addresses = features.Get<IServerAddressesFeature>();
             var address = addresses.Addresses.First();

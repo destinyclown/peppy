@@ -60,11 +60,7 @@ namespace Sample.WebApi
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        
-        {
-            //optionsBuilder.UseMySql(ConnectionString);
+
         }
     }
 }

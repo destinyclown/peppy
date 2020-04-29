@@ -15,6 +15,10 @@ namespace Peppy.Domain.UnitOfWork
         /// </summary>
         public UnitOfWorkOptions()
         {
+            IsTransactional = true;
+            Scope = TransactionScopeOption.Required;
+            Timeout = TimeSpan.FromMinutes(2);
+            IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
         }
 
         /// <summary>

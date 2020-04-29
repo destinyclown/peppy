@@ -17,44 +17,36 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         ///
         /// </summary>
-        /// <typeparam name="TContext"></typeparam>
-        /// <param name="services"></param>
-        /// <param name="connectionString"></param>
-        /// <param name="isUseLogger"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddEntityFrameworkCore<TContext>(this IServiceCollection services, string connectionString, bool isUseLogger = true)
-            where TContext : EFCroeDbContext
-        {
-            services.AddEntityFrameworkCore<TContext>(otp => { otp.ConnectionString = connectionString; });
-            return services;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <typeparam name="TContext"></typeparam>
+        /// <typeparam name="TDbContext"></typeparam>
         /// <param name="services"></param>
         /// <param name="options"></param>
         /// <param name="isUseLogger"></param>
         /// <returns></returns>
-        public static IServiceCollection AddEntityFrameworkCore<TContext>(this IServiceCollection services, Action<EFCoreOptions> options, bool isUseLogger = true)
-            where TContext : EFCroeDbContext
+        public static IServiceCollection AddEntityFrameworkCore<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> options, bool isUseLogger = true)
+            where TDbContext : EFCroeDbContext
         {
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
-            services.AddDbContext<TContext>(optionsAction =>
-            {
-                //使用ef core mysql 连接
-                if (!isUseLogger) return;
-                var loggerFactory = new LoggerFactory();
-                loggerFactory.AddProvider(new EFLoggerProvider());
-                optionsAction.UseLoggerFactory(loggerFactory);
-            });
-            services.AddTransient<IUnitOfWorkManager, UnitOfWorkManager<TContext>>();
-            services.AddTransient<IUnitOfWorkCompleteHandle, UnitOfWorkCompleteHandle<TContext>>();
-            services.AddTransient<IDbContextProvider<TContext>, DbContextProvider<TContext>>();
+            //var efOptions = new EFCoreOptions<TDbContext>();
+            //options(efOptions);
+            //if (efOptions.DbContextOptions == null)
+            //{
+            //    throw new ArgumentNullException(nameof(efOptions.DbContextOptions));
+            //}
+            services.AddDbContext<TDbContext>(options, ServiceLifetime.Singleton);
+            //services.AddDbContext<TDbContext>(optionsAction =>
+            //{
+            //    optionsAction = efOptions.DbContextOptions;
+            //    if (!isUseLogger) return;
+            //    var loggerFactory = new LoggerFactory();
+            //    loggerFactory.AddProvider(new EFLoggerProvider());
+            //    optionsAction.UseLoggerFactory(loggerFactory);
+            //});
+            services.AddSingleton<IUnitOfWorkManager, UnitOfWorkManager<TDbContext>>();
+            //services.AddSingleton<IUnitOfWorkCompleteHandle, UnitOfWorkCompleteHandle<TDbContext>>();
+            services.AddSingleton<IDbContextProvider<TDbContext>, DbContextProvider<TDbContext>>();
             return services;
         }
     }

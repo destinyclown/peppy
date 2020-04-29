@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +20,6 @@
     <ProjectReference Include="..\..\src\Peppy.EntityFrameworkCore\Peppy.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Extensions\Peppy.Extensions.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Mapper\Peppy.Mapper.csproj" />
-    <ProjectReference Include="..\..\src\Peppy.Quartz\Peppy.Quartz.csproj" />
     <ProjectReference Include="..\..\src\Peppy.RabbitMQ\Peppy.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Redis\Peppy.Redis.csproj" />
     <ProjectReference Include="..\..\src\Peppy.Swagger\Peppy.Swagger.csproj" />

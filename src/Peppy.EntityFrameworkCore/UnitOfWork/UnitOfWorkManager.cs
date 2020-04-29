@@ -18,28 +18,26 @@ namespace Peppy.EntityFrameworkCore.UnitOfWork
 
         public IUnitOfWorkCompleteHandle Begin()
         {
-            _dbContext.Database.BeginTransaction();
-            var handle = new UnitOfWorkCompleteHandle<TDbContext>(_dbContext);
+            var tran = _dbContext.Database.BeginTransaction();
+            var handle = new UnitOfWorkCompleteHandle<TDbContext>(tran);
             return handle;
         }
 
         public IUnitOfWorkCompleteHandle Begin(TransactionScopeOption scope)
         {
-            _dbContext.Database.BeginTransaction();
-            var handle = new UnitOfWorkCompleteHandle<TDbContext>(_dbContext);
-            return handle;
+            return Begin(new UnitOfWorkOptions { Scope = scope });
         }
 
         public IUnitOfWorkCompleteHandle Begin(UnitOfWorkOptions options)
         {
-            _dbContext.Database.BeginTransaction();
-            var handle = new UnitOfWorkCompleteHandle<TDbContext>(_dbContext);
+            var scope = new TransactionScope(
+                options.Scope.GetValueOrDefault(), 
+                new TransactionOptions { 
+                    Timeout = options.Timeout.GetValueOrDefault(),
+                    IsolationLevel = options.IsolationLevel.GetValueOrDefault() 
+                });
+            var handle = new UnitOfWorkCompleteScopeHandle<TDbContext>(scope);
             return handle;
-        }
-
-        public void Dispose()
-        {
-            _dbContext.Database.CommitTransaction();
         }
     }
 }

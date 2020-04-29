@@ -6,25 +6,25 @@ using System;
 
 namespace Peppy.EntityFrameworkCore
 {
-    public class EFCoreOptionsExtension<TContext> : IPeppyOptionsExtension
-        where TContext : EFCroeDbContext
+    public class EFCoreOptionsExtension<TDbContext> : IPeppyOptionsExtension
+        where TDbContext : EFCroeDbContext
     {
-        private readonly Action<EFCoreOptions> _configure;
+        private readonly Action<EFCoreOptions<TDbContext>> _configure;
 
-        public EFCoreOptionsExtension(Action<EFCoreOptions> configure)
+        public EFCoreOptionsExtension(Action<EFCoreOptions<TDbContext>> configure)
         {
             _configure = configure;
         }
 
         public void AddServices(IServiceCollection services)
         {
-            var options = new EFCoreOptions();
+            var options = new EFCoreOptions<TDbContext>();
             _configure(options);
-            services.AddDbContext<TContext>();
+            services.AddDbContext<TDbContext>();
             services.Configure(_configure);
-            services.AddScoped<IUnitOfWorkManager, UnitOfWorkManager<TContext>>();
-            services.AddScoped<IUnitOfWorkCompleteHandle, UnitOfWorkCompleteHandle<TContext>>();
-            services.AddScoped<IDbContextProvider<TContext>, DbContextProvider<TContext>>();
+            services.AddScoped<IUnitOfWorkManager, UnitOfWorkManager<TDbContext>>();
+            services.AddScoped<IUnitOfWorkCompleteHandle, UnitOfWorkCompleteHandle<TDbContext>>();
+            services.AddScoped<IDbContextProvider<TDbContext>, DbContextProvider<TDbContext>>();
         }
     }
 }

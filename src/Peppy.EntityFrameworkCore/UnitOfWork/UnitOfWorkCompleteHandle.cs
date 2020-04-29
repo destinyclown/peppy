@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Peppy.Domain.UnitOfWork;
 using System;
 using System.Collections.Generic;
@@ -10,26 +11,36 @@ namespace Peppy.EntityFrameworkCore.UnitOfWork
     public class UnitOfWorkCompleteHandle<TDbContext> : IUnitOfWorkCompleteHandle
         where TDbContext : EFCroeDbContext
     {
-        private readonly TDbContext _dbContext;
+        private readonly IDbContextTransaction _dbContextTransaction;
 
-        public UnitOfWorkCompleteHandle(TDbContext dbContext)
+        public UnitOfWorkCompleteHandle(IDbContextTransaction dbContextTransaction)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _dbContextTransaction = dbContextTransaction ?? throw new ArgumentNullException(nameof(dbContextTransaction));
         }
 
         public void Complete()
         {
-            _dbContext.SaveChanges();
+            _dbContextTransaction.Commit();
         }
 
         public async Task CompleteAsync()
         {
-            await _dbContext.SaveChangesAsync();
+            await _dbContextTransaction.CommitAsync();
+        }
+
+        public void Rollback()
+        {
+            _dbContextTransaction.Rollback();
+        }
+
+        public async Task RollbackAsync()
+        {
+            await _dbContextTransaction.RollbackAsync();
         }
 
         public void Dispose()
         {
-            _dbContext.Dispose();
+            _dbContextTransaction.Dispose();
         }
     }
 }

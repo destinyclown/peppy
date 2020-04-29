@@ -20,5 +20,16 @@ namespace Peppy.Domain.UnitOfWork
         /// </summary>
         /// <returns></returns>
         Task CompleteAsync();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        void Rollback();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task RollbackAsync();
     }
 }

@@ -16,9 +16,8 @@ using Peppy.RabbitMQ;
 using Peppy.Redis;
 using Sample.WebApi.Repositories;
 using Peppy.Extensions;
-using Quartz;
-using Sample.WebApi.Jobs;
 using Peppy.Mapper;
+using System.Transactions;
 
 namespace Sample.WebApi.Controllers
 {
@@ -37,8 +36,6 @@ namespace Sample.WebApi.Controllers
         //private readonly ICappublicer _capBus;
         private readonly ILogger<WeatherForecastController> _logger;
 
-        private readonly ISchedulerFactory _schedulerFactory;
-        private IScheduler _scheduler;
         private readonly IMapper _mapper;
         private readonly IPersonPepository _personPepository;
         private readonly IRedisManager _redisManager;
@@ -51,7 +48,6 @@ namespace Sample.WebApi.Controllers
         ///
         /// </summary>
         /// <param name="logger"></param>
-        /// <param name="schedulerFactory"></param>
         /// <param name="personPepository"></param>
         /// <param name="clientRegister"></param>
         /// <param name="rabbitMQManager"></param>
@@ -62,7 +58,6 @@ namespace Sample.WebApi.Controllers
             //IRedisManager redisManager,
             IMapper mapper,
             IUnitOfWorkManager unitOfWorkManager,
-            ISchedulerFactory schedulerFactory,
             IPersonPepository personPepository,
             ClientRegister clientRegister,
             IRabbitMQManager rabbitMQManager,
@@ -72,7 +67,6 @@ namespace Sample.WebApi.Controllers
             //_capBus = cappublicer;
             //_redisManager = redisManager;
             _unitOfWorkManager = unitOfWorkManager;
-            _schedulerFactory = schedulerFactory;
             _clientRegister = clientRegister;
             _rabbitMQManager = rabbitMQManager;
             _personPepository = personPepository;
@@ -102,13 +96,14 @@ namespace Sample.WebApi.Controllers
         public async Task<PersonDto> Get()
         {
             var watch = TimerStart();
-            using (_unitOfWorkManager.Begin())
-            {
-                
-            }
+            using var uow = _unitOfWorkManager.Begin();
+            var person = await _personPepository.InsertAsync(new Person { Name = Guid.NewGuid().ToString() });
 
-            
-            await _personPepository.InsertAsync(new Person {Name = Guid.NewGuid().ToString()});
+            await uow.CompleteAsync();
+            Console.WriteLine(TimerEnd(watch));
+            return _mapper.Map<Person, PersonDto>(person);
+
+
             //await _personPepository.BatchDeleteAsync(x => x.Id > 1);
             //await _personPepository.Query().Where(x => x.Name == "test").DeleteFromQueryAsync();
             //var persons = await _personPepository.QueryListAsync();
@@ -131,8 +126,6 @@ namespace Sample.WebApi.Controllers
             //}
             //var person = await _mediator.Send(new Person() { Name = "小明" }, default);
             //var person = new Person() { Name = "小明" };
-            Console.WriteLine(TimerEnd(watch));
-            return _mapper.Map<Person, PersonDto>(person);
         }
 
         /// <summary>
@@ -166,9 +159,6 @@ namespace Sample.WebApi.Controllers
         [HttpGet("ShopJob")]
         public async Task<string[]> ShopJob()
         {
-            _scheduler = await _schedulerFactory.GetScheduler();
-            var jobKey = JobKey.Create("job");
-            await _scheduler.Shutdown(true);
             return await Task.FromResult(new string[] { "value1", "value2" });
         }
 
