@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Peppy.EntityFrameworkCore.Repositories;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -47,6 +48,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IUnitOfWorkManager, UnitOfWorkManager<TDbContext>>();
             //services.AddSingleton<IUnitOfWorkCompleteHandle, UnitOfWorkCompleteHandle<TDbContext>>();
             services.AddSingleton<IDbContextProvider<TDbContext>, DbContextProvider<TDbContext>>();
+            services.AddSingleton(typeof(IRepositoryBase<,,>), typeof(RepositoryBase<,,>));
+            services.AddSingleton(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             return services;
         }
     }

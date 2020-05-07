@@ -18,6 +18,9 @@ using Sample.WebApi.Repositories;
 using Peppy.Extensions;
 using Peppy.Mapper;
 using System.Transactions;
+using Peppy.EntityFrameworkCore.Repositories;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace Sample.WebApi.Controllers
 {
@@ -35,7 +38,7 @@ namespace Sample.WebApi.Controllers
 
         //private readonly ICappublicer _capBus;
         private readonly ILogger<WeatherForecastController> _logger;
-
+        private readonly IBaseRepository<AppDbContext> _baseRepository;
         private readonly IMapper _mapper;
         private readonly IPersonPepository _personPepository;
         private readonly IRedisManager _redisManager;
@@ -58,6 +61,7 @@ namespace Sample.WebApi.Controllers
             //IRedisManager redisManager,
             IMapper mapper,
             IUnitOfWorkManager unitOfWorkManager,
+            IBaseRepository<AppDbContext> baseRepository,
             IPersonPepository personPepository,
             ClientRegister clientRegister,
             IRabbitMQManager rabbitMQManager,
@@ -72,6 +76,7 @@ namespace Sample.WebApi.Controllers
             _personPepository = personPepository;
             _mediator = mediator;
             _mapper = mapper;
+            _baseRepository = baseRepository;
         }
 
         private static Stopwatch TimerStart()
@@ -96,10 +101,10 @@ namespace Sample.WebApi.Controllers
         public async Task<PersonDto> Get()
         {
             var watch = TimerStart();
-            using var uow = _unitOfWorkManager.Begin();
-            var person = await _personPepository.InsertAsync(new Person { Name = Guid.NewGuid().ToString() });
-
-            await uow.CompleteAsync();
+            //using var uow = _unitOfWorkManager.Begin();
+            //var person = await _personPepository.InsertAsync(new Person { Name = Guid.NewGuid().ToString() });
+            var person = await _baseRepository.GetRepository<Person>().Query().FirstOrDefaultAsync(x => x.Id == 42);
+            //await uow.CompleteAsync();
             Console.WriteLine(TimerEnd(watch));
             return _mapper.Map<Person, PersonDto>(person);
 

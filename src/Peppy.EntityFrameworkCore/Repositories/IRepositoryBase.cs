@@ -13,9 +13,10 @@ namespace Peppy.EntityFrameworkCore
     /// <summary>
     /// This interface is implemented by all repositories to ensure implementation of
     /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TPrimaryKey"></typeparam>
-    public interface IRepositoryBase<TEntity, TPrimaryKey> : IRepository<TEntity, TPrimaryKey>, ITransientDependency
+    public interface IRepositoryBase<TDbContext, TEntity, TPrimaryKey> : IRepository<TEntity, TPrimaryKey>
         where TEntity : class, IEntity<TPrimaryKey>
     {
     }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Sample.WebApi.Repositories
 {
-    public interface IPersonPepository : IRepositoryBase<Person, int>
+    public interface IPersonPepository : IRepositoryBase<AppDbContext, Person, int>
     {
         Task<List<Person>> QueryListAsync();
     }

@@ -18,7 +18,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
     /// <typeparam name="TDbContext"></typeparam>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TPrimaryKey"></typeparam>
-    public abstract class RepositoryBase<TDbContext, TEntity, TPrimaryKey> : ITransientDependency
+    public class RepositoryBase<TDbContext, TEntity, TPrimaryKey> : IRepositoryBase<TDbContext, TEntity, TPrimaryKey>
             where TDbContext : EFCroeDbContext
             where TEntity : class, IEntity<TPrimaryKey>
     {
@@ -36,7 +36,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         ///
         /// </summary>
         /// <param name="dbContextProvider"></param>
-        protected RepositoryBase(IDbContextProvider<TDbContext> dbContextProvider)
+        public RepositoryBase(IDbContextProvider<TDbContext> dbContextProvider)
         {
             Context = dbContextProvider.GetDbContext();
         }
@@ -47,7 +47,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// Used to get a IQueryable that is used to retrieve entities from entire table.
         /// </summary>
         /// <returns>IQueryable to be used to select entities from database</returns>
-        protected virtual IQueryable<TEntity> Query()
+        public IQueryable<TEntity> Query()
         {
             if (!(Context.Set<TEntity>() is IQueryable<TEntity> query))
                 throw new Exception($"{typeof(TEntity)} TEntity cannot be empty！");
@@ -59,7 +59,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="propertySelectors"></param>
         /// <returns>IQueryable to be used to select entities from database</returns>
-        protected virtual IQueryable<TEntity> QueryIncluding(params Expression<Func<TEntity, object>>[] propertySelectors)
+        public IQueryable<TEntity> QueryIncluding(params Expression<Func<TEntity, object>>[] propertySelectors)
         {
             if (propertySelectors == null || !propertySelectors.Any())
             {
@@ -75,7 +75,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// Used to query a array of entities from data table
         /// </summary>
         /// <returns>Array of entities</returns>
-        protected virtual async Task<TEntity[]> QueryArrayAsync()
+        public async Task<TEntity[]> QueryArrayAsync()
         {
             return await Query().ToArrayAsync();
         }
@@ -85,7 +85,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns>Array of entities</returns>
-        protected virtual async Task<TEntity[]> QueryArrayAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity[]> QueryArrayAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await Query().Where(predicate).ToArrayAsync();
         }
@@ -94,7 +94,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// Used to query a list of entities from data table
         /// </summary>
         /// <returns>List of entities</returns>
-        protected virtual async Task<List<TEntity>> QueryListAsync()
+        public async Task<List<TEntity>> QueryListAsync()
         {
             return await Query().ToListAsync();
         }
@@ -104,7 +104,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns>List of entities</returns>
-        protected virtual async Task<List<TEntity>> QueryListAsync(Expression<Func<TEntity, bool>> predicate = null)
+        public async Task<List<TEntity>> QueryListAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
             return await Query().Where(predicate).ToListAsync();
         }
@@ -114,7 +114,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns>Entity</returns>
-        protected virtual async Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await Query().SingleAsync(predicate);
         }
@@ -124,7 +124,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Entity</returns>
-        protected virtual async Task<TEntity> FirstOrDefaultAsync(TPrimaryKey id)
+        public async Task<TEntity> FirstOrDefaultAsync(TPrimaryKey id)
         {
             return await Query().FirstOrDefaultAsync(CreateEqualityExpressionForId(id));
         }
@@ -133,7 +133,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// Gets an entity with given given predicate or null if not found.
         /// </summary>
         /// <param name="predicate">Predicate to filter entities</param>
-        protected virtual async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await Query().FirstOrDefaultAsync(predicate);
         }
@@ -264,7 +264,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         ///
         /// </summary>
         /// <param name="entity"></param>
-        protected virtual void AttachIfNot(TEntity entity)
+        public void AttachIfNot(TEntity entity)
         {
             if (!Table.Local.Contains(entity))
             {
@@ -277,7 +277,7 @@ namespace Peppy.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        protected virtual Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)
+        public Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)
         {
             var lambdaParam = Expression.Parameter(typeof(TEntity));
 
